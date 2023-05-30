@@ -7,6 +7,7 @@ const spawner = require("child_process").spawn
 const { exec } = require('child_process');
 
 let i = 0;
+console.log(i)
 
 const format = require("./FormatBack").format
 const azureApi = require("./azure").checkAzure;
