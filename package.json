@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "mammoth": "^1.6.0",
+    "mongo": "^0.1.0",
+    "mongoose": "^7.2.2",
     "nodemon": "^2.0.22"
   }
 }

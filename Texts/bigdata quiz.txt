@@ -1,0 +1,84 @@
+Replicate – run the functions multiple times
+Rep – run the function one time, replicate the result
+matrix(x,y) -> creates x*y matrix of 0
+matrix(1:12, nrow = 3, byrow = T)
+diag(mt) -> diagonal of matrix
+diag(10,5,5) -> creates 5x5 matrix, diagonals equal to 10, others 0
+typeof(mt) -> returns double
+class(mt) -> returns matrix array
+mt[x,y] -> reach x,th yth value of matrix
+mt[x,] -> returns x th row
+as.vector(mt) -> returns vectorized mt
+dim(mt) -> returns dimensions
+ncol(mt), nrow(mt) -> returns number of rows/cols
+rowSums, colSums -> returns sum of row/col values of each
+matrix-> 2 dim, array -> multi dim
+array(1:24, dim = c(6, 4)) -> just like matrix
+array(1:24, dim = c(4,3,2)) -> ismatrix gives false, is array gives true
+rbind,cbind -> creates matrix out of vectors (binds them )
+mm[4:6, c("a", "d")] returns columns of name a and d
+colnames, rownames -> returns column/row names
+list -> combination of different types of data, including vector, matrix etc
+ls[[x]] -> returns the xth value of list
+df -< data.frame(a = c(1,2,3,4,5), b = c("aa","bb","cc","dd", "ee"), c = c(T,F,F,T,T)) returns dataframe
+df$columnname returns specific colum ~ df$[,columname]
+round(runif(10,500,1000), digits = 2) -> returns vector of 10 numbers between 500 and 1000 roundeded t 2 decimals
+str(df) -> returs info df
+summary(df) -> returns more info about df
+sapply(df1, class) -> applies class function to columns
+head(df1, n = x) -> returns x rows of df ~ tail returns the same but starting from end
+df1[df1$color == "red",] returns only rows where color = red (filter)
+subset(df1, sales < 600, select = c("id", "sales") -> returns easy filter
+save(df1, file = "df1.RDATA") -> saves df1
+getwd() -> returns working directors
+system("") -> runs system commands inside r
+system("ls -la") -> runs system commands inside r
+rm(df1) -> removes dataframe
+load(file = "df1.RDATA") -> loads from memory
+df[, c(-6,-1)] -> returns all rows except 1 and 6
+quantile(diamonds$price) -> returns 0,25,50,75,100% points of data
+sort(diamonds$price, decrasing  = T/F) -> returns sorted
+order -> returns the indexes of values if sorted
+tibble -> upgraded dataframe
+read.csv() -> return reading csv file
+read.table() -> return reading file
+read. delim() function is used to read delimited text files in the R Language.
+fread(table) -> efficient for reading huge data
+readHTMLTable(url, header = T, which = tableIndex) -> reads html tables
+gsub("x", "y", columnName) -> changes x to y
+utf8ToInt() returns universtal value;
+160 for space from html;
+install.packages("data.table") -> package
+setkey(dt, "columnName") -> sorts depending on key
+setkey(dt, NULL) -> cancel keys
+setorder(dt, -className) -> sort reverse order
+setorderv(dt, c("temperature", 1)) -> sort reverse order. 1- increasing, -1 -  inverse
+Sys.date() -> returns data
+as.Date(str, format = "%Y-%d-%m") -> returns to data year,date,month (B for full month name)
+format(date, "%a %d %m %Y") -> return formatted date (a for weekday)
+weekdays() -> return weekday
+seq.Date(date1, date, "day / month / year") -> returns list of all dates in between
+max,min,median,quantile
+quantile(diamonds$price, probs = c(0, .33, .55, .8, 1) // seq(0,1,.1)) -> returns certain quantiles
+sample(c("s", "m", "l"), 50, replace = T, prob = c(.8,.1, .1)) returns 80%, 10%, 10% of random numbers for each
+corelation -> to see relation between 2 variables. change in variable value shows same change in another variable value change
+causation -> value change of variable affects value change of another variable
+cor(diamonds$carat, diamonds$price) -> returns corelation between 2 vars
+cor(diamonds[, c(1,5,7)]) -> matrix of corelations
+corrgram(mtcars //lowe.panel = panel.shade, panel.pie, panel,minmax) -> plots a table which shows corelation between all vars
+aggregate(price ~ cut, diamonds, mean/max/min/median) -> mean of variables by grouping
+unique(diamonds$price) -> returns unique values
+table(diamonds$price) -> returns unique values with count
+hist(diamonds$price, main = "name", xlab, ylab // name of axis, border = "color", col = "color, breaks = numberOfBreaks) -> returns historgram
+plot(carat~price, diamonds, type = "", lty = "dotted") -> plots relation between two variables
+abline(model, col = "color", lty = "dashed") -> draws line
+indexes <- sample(1:nrow(diamonds), 5 % nrow(diamonds) / 100) -> random 5 percent of whole data
+mean(doamonds$price, na.rm = T) -> ignore na value
+pairs(mtcars[, c(1,3,4,6)]) -> draws plot of corelation table of each pairs of variable
+
+qplot(manufacturer, data = mpg, geom = bar, fill = manufacturer) -> plots bar
+mpg$is.auto <- statsWith(mpg$trans, "auto"); -> creates new column, values equal to true if starts with auto
+mpg$tran2 <-ifelse(mpg$is.auto, "auto", "manual") -> creates new column, if value = true, auto, else manual
+
+qplot(tran2, data = mpg, geom = "bar/boxplot/histogram", fill = tran2/bins = 30)
+qplot(tran2,cty, data = mpg, geom = "boxplot", fill = tran2)

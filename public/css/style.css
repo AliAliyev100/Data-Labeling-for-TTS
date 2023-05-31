@@ -7,9 +7,9 @@ p {
 a:hover {
   color:#23527c;
 }
-a:visited {
+/* a:visited {
   color: #8d75a3;
-}
+} */
 
 body {
 	line-height: 1.5;
