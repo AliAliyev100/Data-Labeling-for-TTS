@@ -149,7 +149,7 @@ function createDownloadLink(blob) {
 
 async function sendToNodeJs(e) {
 	e.preventDefault();
-	const baseURL = "http://localhost:8383/"
+	const baseURL = "/create-audio";
 	const audioFile = document.querySelector('audio').src;
 	const formData = new FormData();
 	const fileName = 'audio.wav'; // set the filename to be used on the server
@@ -161,7 +161,7 @@ async function sendToNodeJs(e) {
 			formData.append('audio', audioBlob);
 
 			// Send the FormData object to the server using Fetch API
-			fetch('/', {
+			fetch(baseURL, {
 				method: 'POST',
 				body: formData
 			})
