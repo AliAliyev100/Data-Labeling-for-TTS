@@ -3,14 +3,15 @@ const fs = require("fs");
 const multer = require("multer");
 const textfile = require("../models/textFile");
 
-const addTextToDatabase = (filedata, filename, next) => {
+const addTextToDatabase = (filedata, file, next) => {
   const files = filedata.split("\n").map((file) => file.toString());
 
   const fileitems = files.map((text) => ({ text }));
 
   const textFile = new textfile({
-    filename: filename,
-    fileLocation: "/",
+    filename: file.filename,
+    originalFilename: file.originalname,
+    fileLocation: file.path,
     fileitems: { items: fileitems },
   });
 
@@ -37,7 +38,7 @@ exports.addItemText = (req, res, next) => {
     }
     if (req.file.mimetype === "text/plain") {
       const text = fileData.toString("utf8");
-      addTextToDatabase(text, req.file.originalname, next)
+      addTextToDatabase(text, req.file, next)
         .then((result) => {
           res.redirect("/index.html");
         })

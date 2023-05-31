@@ -7,6 +7,10 @@ const textfileSchema = new Schema({
     type: String,
     required: true,
   },
+  originalFilename: {
+    type: String,
+    required: true,
+  },
   fileLocation: {
     type: String,
     required: true,
