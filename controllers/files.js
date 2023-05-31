@@ -6,10 +6,12 @@ const textfile = require("../models/textFile");
 const addTextToDatabase = (filedata, filename, next) => {
   const files = filedata.split("\n").map((file) => file.toString());
 
+  const fileitems = files.map((text) => ({ text }));
+
   const textFile = new textfile({
     filename: filename,
     fileLocation: "/",
-    fileitems: { items: files },
+    fileitems: { items: fileitems },
   });
 
   return textFile.save();
