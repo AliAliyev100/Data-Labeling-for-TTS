@@ -1,10 +1,14 @@
 const express = require("express");
 const multer = require("multer");
 const mongoose = require("mongoose");
+const textfile = require("./models/textfile");
+const bodyParser = require("body-parser");
+
 
 let i = 0;
 
 const app = express();
+app.use(bodyParser.json());
 
 const fileStorageAudio = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -23,7 +27,10 @@ const fileStorageText = multer.diskStorage({
     cb(null, "Texts");
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname);
+    cb(
+      null,
+      new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
+    );
   },
 });
 
@@ -40,8 +47,32 @@ const fileFilter = (req, file, cb) => {
 };
 
 const uploadAudio = multer({ storage: fileStorageAudio });
-const uploadText = multer({ storage: fileStorageText, fileFilter: fileFilter }).single("text");
+const uploadText = multer({
+  storage: fileStorageText,
+  fileFilter: fileFilter,
+}).single("text");
 let result;
+
+app.get("/label", (req, res, next) => {
+  textfile
+    .find()
+    .then((result) => {
+      res.json({
+        result: result,
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+});
+
+app.post("/gettextvalues", (req, res) => {
+  const { filename } = req.body;
+  
+  filename
+
+  res.sendStatus(200);
+});
 
 app.use(express.static("public"));
 
@@ -51,7 +82,7 @@ app.post("/create-audio", uploadAudio.single("audio"), async (req, res) => {
 
 const filesRouter = require("./routes/files");
 
-app.use(uploadText)
+app.use(uploadText);
 app.use(filesRouter);
 
 // app.post("/add-item-text", uploadText.single("text"), async (req, res) => {
@@ -88,7 +119,6 @@ app.use(filesRouter);
 //     }
 //   });
 // });
-
 
 const mongodbUri =
   "mongodb+srv://aliyevali04:5pT54lC70RpidywW@cluster0.qebtx7h.mongodb.net/tts";

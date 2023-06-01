@@ -1,0 +1,88 @@
+exports.postLogin = (req, res, next) => {
+  let errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.render("auth/login", {
+      path: "/login",
+      pageTitle: "Login",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
+
+  res.redirect("/");
+};
+
+
+
+
+
+
+----------------------------------------------------
+
+
+
+router.post(
+  "/login",
+  [
+    check("email", "Please enter a valid email sweetheart")
+      .isEmail()
+      .custom((value, { req }) => {
+        return User.findOne({ email: value }).then((user) => {
+          if (!user) {
+            return Promise.reject("Invalid Email");
+          }
+          return bcrpyt
+            .compare(req.body.password, user.password)
+            .then((ifMatches) => {router.post(
+                "/login",
+                [
+                  check("email", "Please enter a valid email sweetheart")
+                    .isEmail()
+                    .custom((value, { req }) => {
+                      return User.findOne({ email: value }).then((user) => {
+                        if (!user) {
+                          return Promise.reject("Invalid Email");
+                        }
+                        return bcrpyt
+                          .compare(req.body.password, user.password)
+                          .then((ifMatches) => {
+                            if (ifMatches) {
+                              req.session.isLoggedIn = true;
+                              req.session.user = user;
+                              return req.session.save((err) => {
+                                console.log(err);
+                              });
+                            }
+                            return Promise.reject("Invalid Password");
+                          });
+                      });
+                    }),
+                  body(
+                    "password",
+                    "Your Password length must be at least 5 characters long sweetheart"
+                  )
+                    .isLength({ min: 5 })
+                    .isAlphanumeric(),
+                ],
+                authController.postLogin
+              );
+              if (ifMatches) {
+                req.session.isLoggedIn = true;
+                req.session.user = user;
+                return req.session.save((err) => {
+                  console.log(err);
+                });
+              }
+              return Promise.reject("Invalid Password");
+            });
+        });
+      }),
+    body(
+      "password",
+      "Your Password length must be at least 5 characters long sweetheart"
+    )
+      .isLength({ min: 5 })
+      .isAlphanumeric(),
+  ],
+  authController.postLogin
+);

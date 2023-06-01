@@ -1,10 +1,17 @@
 const mammoth = require("mammoth");
 const fs = require("fs");
 const multer = require("multer");
-const textfile = require("../models/textFile");
+const textfile = require("../models/textfile");
 
-const addTextToDatabase = (filedata, file, next) => {
-  const files = filedata.split("\n").map((file) => file.toString());
+const addTextToDatabase = (filedata, file) => {
+  const files = filedata
+    .split("\n")
+    .map((file) => file.toString())
+    .filter((f) => {
+      return f.length > 0;
+    });
+
+
 
   const fileitems = files.map((text) => ({ text }));
 
@@ -38,9 +45,9 @@ exports.addItemText = (req, res, next) => {
     }
     if (req.file.mimetype === "text/plain") {
       const text = fileData.toString("utf8");
-      addTextToDatabase(text, req.file, next)
+      addTextToDatabase(text, req.file)
         .then((result) => {
-          res.redirect("/index.html");
+          res.redirect("/label.html");
         })
         .catch((err) => {
           const error = new Error(err);
@@ -53,8 +60,15 @@ exports.addItemText = (req, res, next) => {
         .extractRawText({ buffer: fileData })
         .then((result) => {
           const text = result.value; // Extracted text
-          console.log(text);
-          res.redirect("/index.html");
+          addTextToDatabase(text, req.file)
+            .then((result) => {
+              res.redirect("/label.html");
+            })
+            .catch((err) => {
+              const error = new Error(err);
+              error.httpStatusCode = 500;
+              return next(error);
+            });
         })
         .catch((error) => {
           console.error(error);
