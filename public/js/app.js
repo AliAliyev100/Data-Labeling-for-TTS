@@ -176,3 +176,4 @@ async function sendToNodeJs(e) {
 		})
 		.catch(error => console.error(error));
 }
+

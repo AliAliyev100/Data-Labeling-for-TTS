@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const textfile = require("./models/textfile");
 const bodyParser = require("body-parser");
 
-
 let i = 0;
 
 const app = express();
@@ -66,12 +65,20 @@ app.get("/label", (req, res, next) => {
     });
 });
 
-app.post("/gettextvalues", (req, res) => {
+app.post("/gettextvalues", (req, res, next) => {
   const { filename } = req.body;
-  
-  filename
 
-  res.sendStatus(200);
+  textfile
+    .find({ filename: filename })
+    .then((textDocument) => {
+      res.json({
+        result: textDocument[0],
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+
 });
 
 app.use(express.static("public"));
@@ -84,41 +91,6 @@ const filesRouter = require("./routes/files");
 
 app.use(uploadText);
 app.use(filesRouter);
-
-// app.post("/add-item-text", uploadText.single("text"), async (req, res) => {
-
-//   // Read the contents of the uploaded file
-//   const filePath = req.file.path;
-//   fs.readFile(filePath, "binary", (err, fileData) => {
-//     if (err) {
-//       console.error(err);
-//       return res.status(500).send("Error reading file.");
-//     }
-//     // Extract text from the Word document
-//     if (req.file.mimetype === "text/plain") {
-//       // Handle TXT files
-//       const text = fileData.toString("utf8");
-//       console.log(text);
-//       res.redirect("/index.html");
-//     } else {
-//       // Handle Word documents
-//       mammoth.extractRawText({ buffer: fileData })
-//         .then(result => {
-//           const text = result.value; // Extracted text
-//           console.log(text);
-//           res.redirect("/index.html");
-//         })
-//         .catch(error => {
-//           console.error(error);
-//           if (error.message.includes("Corrupted zip")) {
-//             res.status(400).send("Invalid file format. Please upload a valid Word document.");
-//           } else {
-//             res.status(500).send("Error extracting text from the file.");
-//           }
-//         });
-//     }
-//   });
-// });
 
 const mongodbUri =
   "mongodb+srv://aliyevali04:5pT54lC70RpidywW@cluster0.qebtx7h.mongodb.net/tts";

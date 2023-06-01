@@ -18,7 +18,7 @@ const textfileSchema = new Schema({
   fileitems: {
     items: [
       {
-        Audio: {
+        audio: {
           type: Schema.Types.ObjectId,
           ref: "Audio",
         },
