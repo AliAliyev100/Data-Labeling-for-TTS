@@ -1,15 +1,13 @@
 const express = require("express");
 const multer = require("multer");
 const mongoose = require("mongoose");
-const textfile = require("./models/textfile");
-const ObjectId = require("mongoose").Types.ObjectId;
 
-let i = 0;
+const textfile = require("./models/textfile");
+const audioRouter = require("./routes/audio");
+const filesRouter = require("./routes/files");
 
 const app = express();
 app.use(express.json());
-
-let textId;
 
 const fileStorageAudio = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -44,58 +42,16 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const uploadAudio = multer({ storage: fileStorageAudio });
+const uploadAudio = multer({ storage: fileStorageAudio }).single("audio");
 const uploadText = multer({
   storage: fileStorageText,
   fileFilter: fileFilter,
 }).single("text");
-let result;
-
-app.get("/label", (req, res, next) => {
-  textfile
-    .find()
-    .then((result) => {
-      res.json({
-        result: result,
-      });
-    })
-    .catch((err) => {
-      next(err);
-    });
-});
-
-app.post("/gettextvalues", (req, res, next) => {
-  const { filename } = req.body;
-
-  textfile
-    .find({ filename: filename })
-    .then((textDocument) => {
-      res.json({
-        result: textDocument[0],
-      });
-    })
-    .catch((err) => {
-      next(err);
-    });
-});
 
 app.use(express.static("public"));
 
-app.post("/create-audio", uploadAudio.single("audio"), async (req, res) => {
-  const textId = req.body.textId;
-  textfile
-    .findOneAndUpdate(
-      { "fileitems.items._id": textId }, // Find the document with the matching item _id
-      { $set: { "fileitems.items.$.audioPath": "/Audios/" + textId + ".wav" } }, // Update the audioPath field
-      { new: true } // Return the updated document
-    )
-    .then((updatedTextFile) => {})
-    .catch((error) => {
-      console.error("Error updating text file:", error);
-    });
-  res.json({ result: true });
-});
-const filesRouter = require("./routes/files");
+app.use(uploadAudio);
+app.use(audioRouter);
 
 app.use(uploadText);
 app.use(filesRouter);

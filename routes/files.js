@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { addItemText } = require("../controllers/files");
+const fileController = require("../controllers/files");
 
-router.post("/add-item-text", addItemText);
+router.post("/add-item-text", fileController.addItemText);
+
+router.get("/label", fileController.getLabel);
+
+router.post("/gettextvalues", fileController.getTextValues);
 
 module.exports = router;

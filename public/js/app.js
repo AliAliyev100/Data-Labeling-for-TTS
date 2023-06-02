@@ -119,8 +119,6 @@ function createDownloadLink(blob) {
 
   au.controls = true;
   au.src = url;
-  console.log(url);
-  console.log(au.src);
   audioUrl = au.src;
   au.id = "audioElement";
 
@@ -175,7 +173,6 @@ async function sendToNodeJs(e) {
         body: formData,
       }).then((result) => {
         currentRecording = document.querySelector("#audioElement");
-        console.log(currentRecording);
         currentRecording.parentNode.removeChild(currentRecording);
 
         while (texts[i].audioPath) {

@@ -1,6 +1,5 @@
 const mammoth = require("mammoth");
 const fs = require("fs");
-const multer = require("multer");
 const textfile = require("../models/textfile");
 
 const addTextToDatabase = (filedata, file) => {
@@ -11,17 +10,13 @@ const addTextToDatabase = (filedata, file) => {
       return f.length > 0;
     });
 
-
-
   const fileitems = files.map((text) => ({ text }));
-
   const textFile = new textfile({
     filename: file.filename,
     originalFilename: file.originalname,
     fileLocation: file.path,
     fileitems: { items: fileitems },
   });
-
   return textFile.save();
 };
 
@@ -55,7 +50,6 @@ exports.addItemText = (req, res, next) => {
           return next(error);
         });
     } else {
-      // Handle Word documents
       mammoth
         .extractRawText({ buffer: fileData })
         .then((result) => {
@@ -86,6 +80,29 @@ exports.addItemText = (req, res, next) => {
   });
 };
 
-// module.exports = {
-//   addItemText,
-// };
+exports.getLabel = (req, res, next) => {
+  textfile
+    .find()
+    .then((result) => {
+      res.json({
+        result: result,
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getTextValues = (req, res, next) => {
+  const { filename } = req.body;
+  textfile
+    .find({ filename: filename })
+    .then((textDocument) => {
+      res.json({
+        result: textDocument[0],
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
