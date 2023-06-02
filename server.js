@@ -2,22 +2,21 @@ const express = require("express");
 const multer = require("multer");
 const mongoose = require("mongoose");
 const textfile = require("./models/textfile");
-const bodyParser = require("body-parser");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 let i = 0;
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
+
+let textId;
 
 const fileStorageAudio = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "Audios");
   },
   filename: (req, file, cb) => {
-    cb(
-      null,
-      new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
-    );
+    cb(null, file.originalname + ".wav");
   },
 });
 
@@ -78,15 +77,25 @@ app.post("/gettextvalues", (req, res, next) => {
     .catch((err) => {
       next(err);
     });
-
 });
 
 app.use(express.static("public"));
 
 app.post("/create-audio", uploadAudio.single("audio"), async (req, res) => {
-  console.log("uploaded Audio");
+  const textId = req.body.textId;
+  textfile.findOneAndUpdate(
+    { "fileitems.items._id": textId }, // Find the document with the matching item _id
+    { $set: { "fileitems.items.$.audioPath": "/Audios/"+textId + ".wav" } }, // Update the audioPath field
+    { new: true } // Return the updated document
+  )
+    .then((updatedTextFile) => {
+      console.log("Updated text file:", updatedTextFile);
+    })
+    .catch((error) => {
+      console.error("Error updating text file:", error);
+    });
 });
-
+console.log("/Audios/6479a462088cf41a58b34513.wav")
 const filesRouter = require("./routes/files");
 
 app.use(uploadText);

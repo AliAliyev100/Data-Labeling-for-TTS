@@ -18,10 +18,7 @@ const textfileSchema = new Schema({
   fileitems: {
     items: [
       {
-        audio: {
-          type: Schema.Types.ObjectId,
-          ref: "Audio",
-        },
+        audioPath: { type: String, default: ""},
         text: { type: String, required: true },
       },
     ],
