@@ -19,6 +19,8 @@ var pauseButton = document.getElementById("pauseButton");
 var submitButton = document.getElementById("submitButton");
 var deleteButton = document.getElementById("deleteButton");
 
+let currentRecording = document.querySelector("#audioElement");
+
 //add events to those 2 buttons
 recordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", stopRecording);
@@ -120,6 +122,7 @@ function createDownloadLink(blob) {
   console.log(url);
   console.log(au.src);
   audioUrl = au.src;
+  au.id = "audioElement";
 
   link.href = url;
   link.innerHTML = "Save voice to disk from here";
@@ -154,30 +157,33 @@ async function sendToNodeJs(e) {
   const baseURL = "/create-audio";
   const audioFile = document.querySelector("audio").src;
   const formData = new FormData();
-  const fileName = "audio.wav"; // set the filename to be used on the server
+
+  submitButton.style.display = "none";
+  deleteButton.style.display = "none";
+  recordButton.disabled = false;
 
   fetch(audioFile)
     .then((response) => response.blob())
     .then((blob) => {
-      textId = texts[i]._id
+      textId = texts[i]._id;
       const audioBlob = new File([blob], textId, { type: "audio/wav" });
       formData.append("audio", audioBlob);
       formData.append("textId", textId);
 
-      // Send the FormData object to the server using Fetch API
       fetch(baseURL, {
         method: "POST",
         body: formData,
-      })
-        .then((response) => response.text())
-        .then((data) => {
-          document.getElementById("result").innerHTML =
-            "Our Result: " + JSON.parse(data).result;
-          //document.getElementById("azureResult").innerHTML = "Azure Result: " + JSON.parse(data).azureRes;
-          document.getElementById("result").style.display = "block";
-          document.getElementById("azureResult").style.display = "block";
-        })
-        .catch((error) => console.error(error));
+      }).then((result) => {
+        currentRecording = document.querySelector("#audioElement");
+        console.log(currentRecording);
+        currentRecording.parentNode.removeChild(currentRecording);
+
+        while (texts[i].audioPath) {
+          i++;
+        }
+        i++;
+        document.getElementById("textinput").value = texts[i].text;
+      });
     })
     .catch((error) => console.error(error));
 }
@@ -194,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         anchor.addEventListener("click", (event) => {
           event.preventDefault();
-
+          i = 0;
           fetch("/gettextvalues", {
             method: "POST",
             headers: {
