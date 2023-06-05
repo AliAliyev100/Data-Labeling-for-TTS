@@ -1,47 +1,56 @@
 <!DOCTYPE html>
 <html>
-  <!-- Added by HTTrack --><meta
-    http-equiv="content-type"
-    content="text/html;charset=UTF-8"
-  /><!-- /Added by HTTrack -->
-  <head>
-    <meta charset="UTF-8" />
-    <title>Data Labeling</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8">
+  <title>Data Labeling</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" type="text/css" href="css/nav-css.css" />
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <script src="js/recorder.js" defer></script>
-    <script src="js/app.js" defer></script>
-  </head>
-  <body>
-    <ul class="nav">
-      <li class="nav-item">
-        <a href="/index.html" class="nav-link">Upload text item</a>
-      </li>
-      <li class="nav-item">
-        <a href="/label.html" class="nav-link">Label</a>
-      </li>
-    </ul>
+  <link rel="stylesheet" type="text/css" href="css/nav-css.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script src="js/recorder.js" defer></script>
+  <script src="js/app.js" defer></script>
 
-    <div id="textInputArea">
-      <h3 id="container"></h3>
+  <style>
 
-      <div id="controls">
-        <button id="recordButton">Record</button>
-        <button id="pauseButton" disabled>Pause</button>
-        <button id="stopButton" disabled>Stop</button>
-      </div>
-      <div id="formats"></div>
-      <ol id="recordingsList"></ol>
+  </style>
+</head>
+<body>
+  <ul class="nav">
+    <li class="nav-item">
+      <a href="/index.html" class="nav-link">Upload text item</a>
+    </li>
+    <li class="nav-item">
+      <a href="/label.html" class="nav-link">Label</a>
+    </li>
+  </ul>
+
+  <div id="textInputArea">
+    <h3 id="container">Data Labeling</h3>
+    <br> <!-- Added new line here -->
+  
+    <div id="controls">
+      <button id="recordButton">Record</button>
+      <button id="pauseButton" disabled>Pause</button>
+      <button id="stopButton" disabled>Stop</button>
+    </div>
+  
+    <div id="formats"></div>
+  
+    <ol id="recordingsList"></ol>
+  
+    <div class="button-container">
       <div>
         <button id="deleteButton">Delete</button>
+      </div>
+      <div>
         <button id="submitButton">Submit</button>
       </div>
-
-      <div id="textdiv">
-        <input type="text" id="textinput" disabled />
-      </div>
     </div>
+  
+    <div id="textdiv">
+      <input type="text" id="textinput" disabled>
+    </div>
+  </div>
+    
   </body>
 </html>

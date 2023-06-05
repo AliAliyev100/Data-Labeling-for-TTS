@@ -126,7 +126,7 @@ function createDownloadLink(blob) {
   au.id = "audioElement";
 
   link.href = url;
-  link.innerHTML = "Save voice to disk from here";
+  // link.innerHTML = "Save voice to disk from here";
 
   li.appendChild(au);
 
@@ -134,7 +134,7 @@ function createDownloadLink(blob) {
 
   var upload = document.createElement("a");
   upload.href = "#";
-  upload.innerHTML = "Upload";
+  // upload.innerHTML = "Upload";
   upload.addEventListener("click", function (event) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
@@ -200,8 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const container = document.getElementById("container");
-        container.appendChild(anchor);
         container.appendChild(document.createElement("br"));
+        container.appendChild(anchor);
       });
     })
     .catch((error) => console.error(error));

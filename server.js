@@ -67,20 +67,11 @@ app.use("/files", uploadText, filesRouter);
 
 const mongoURI = "mongodb://127.0.0.1:27017/tts";
 
-// mongoose
-//   .connect(mongodbUri)
-//   .then((res) => {
-//     app.listen(3000);
-//   })
-//   .catch((err) => {
-//     throw (new Error(err));
-//   });
-
 mongoose
-  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(mongoURI)
   .then(() => {
     app.listen(3000);
   })
   .catch((err) => {
-    console.log("Error connecting to MongoDB:", err);
+    throw new Error(err);
   });
