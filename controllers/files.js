@@ -30,7 +30,7 @@ exports.addItemText = (req, res, next) => {
   }
 
   const filePath = req.file.path;
-  fs.readFile(filePath, "binary", (err, fileData) => {
+  fs.readFile(filePath, "utf-8", (err, fileData) => {
     if (!req.file) {
       const errorMessage =
         "Invalid file. Please upload a valid text or Word document file.";
