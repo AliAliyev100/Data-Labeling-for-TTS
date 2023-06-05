@@ -1,13 +1,14 @@
 //webkitURL is deprecated but nevertheless
 URL = window.URL || window.webkitURL;
-
 var gumStream; //stream from getUserMedia()
 var rec; //Recorder.js object
 var input; //MediaStreamAudioSourceNode we'll be recording
 let audioUrl;
 
-let i = 0;
-let texts;
+let index = 0;
+let text;
+let textName;
+let filename;
 
 // shim for AudioContext when it's not avb.
 var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -20,6 +21,8 @@ var submitButton = document.getElementById("submitButton");
 var deleteButton = document.getElementById("deleteButton");
 
 let currentRecording = document.querySelector("#audioElement");
+
+recordButton.disabled = true;
 
 //add events to those 2 buttons
 recordButton.addEventListener("click", startRecording);
@@ -163,10 +166,9 @@ async function sendToNodeJs(e) {
   fetch(audioFile)
     .then((response) => response.blob())
     .then((blob) => {
-      textId = texts[i]._id;
-      const audioBlob = new File([blob], textId, { type: "audio/wav" });
+      const audioBlob = new File([blob], textName, { type: "audio/wav" });
       formData.append("audio", audioBlob);
-      formData.append("textId", textId);
+      formData.append("textId", textName);
 
       fetch("/audio" + baseURL, {
         method: "POST",
@@ -174,12 +176,7 @@ async function sendToNodeJs(e) {
       }).then((result) => {
         currentRecording = document.querySelector("#audioElement");
         currentRecording.parentNode.removeChild(currentRecording);
-
-        while (texts[i].audioPath) {
-          i++;
-        }
-        i++;
-        document.getElementById("textinput").value = texts[i].text;
+        getTextValues(filename);
       });
     })
     .catch((error) => console.error(error));
@@ -197,39 +194,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
         anchor.addEventListener("click", (event) => {
           event.preventDefault();
-          i = 0;
-          fetch("/files/gettextvalues", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ filename: res.filename }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              texts = data.result.fileitems.items;
-
-              while (texts[i].audioPath) {
-                i++;
-              }
-
-              document.getElementById("textinput").value =
-                data.result.fileitems.items[i].text;
-            })
-            .catch((error) => {
-              console.error(
-                "An error occurred while sending the POST request:",
-                error
-              );
-            });
+          filename = res.filename;
+          getTextValues(res.filename);
+          recordButton.disabled = false;
         });
 
         const container = document.getElementById("container");
         container.appendChild(anchor);
         container.appendChild(document.createElement("br"));
       });
-
-      // container.innerHTML = (data.result[0].filename);
     })
     .catch((error) => console.error(error));
 });
+
+function getTextValues(filename) {
+  fetch("/files/gettextvalues", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ filename: filename, index: index }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      text = data.result;
+      textName = data.fileName;
+      document.getElementById("textinput").value = text;
+    })
+    .catch((error) => {
+      console.error("An error occurred while sending the POST request:", error);
+    });
+}

@@ -94,12 +94,21 @@ exports.getLabel = (req, res, next) => {
 };
 
 exports.getTextValues = (req, res, next) => {
-  const { filename } = req.body;
+  let { filename, index } = req.body;
   textfile
     .find({ filename: filename })
     .then((textDocument) => {
+      const fileitems = textDocument[0].fileitems;
+      const items = fileitems.items;
+      while (items[index].audioPath) {
+        index++;
+      }
+      const result = items[index];
+
       res.json({
-        result: textDocument[0],
+        result: result.text,
+        index: index,
+        fileName: result._id,
       });
     })
     .catch((err) => {

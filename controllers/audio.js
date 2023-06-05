@@ -8,7 +8,8 @@ exports.createAudio = (req, res, next) => {
       { $set: { "fileitems.items.$.audioPath": "/Audios/" + textId + ".wav" } },
       { new: true }
     )
-    .then((updatedTextFile) => {})
+    .then((updatedTextFile) => {
+    })
     .catch((error) => {
       console.error("Error updating text file:", error);
     });

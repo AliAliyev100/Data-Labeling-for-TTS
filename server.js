@@ -65,14 +65,22 @@ app.use(express.static("public"));
 app.use("/audio", uploadAudio, audioRouter);
 app.use("/files", uploadText, filesRouter);
 
-const mongodbUri =
-  "mongodb+srv://aliyevali04:5pT54lC70RpidywW@cluster0.qebtx7h.mongodb.net/tts";
+const mongoURI = "mongodb://127.0.0.1:27017/tts";
+
+// mongoose
+//   .connect(mongodbUri)
+//   .then((res) => {
+//     app.listen(3000);
+//   })
+//   .catch((err) => {
+//     throw (new Error(err));
+//   });
 
 mongoose
-  .connect(mongodbUri)
-  .then((res) => {
+  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
     app.listen(3000);
   })
   .catch((err) => {
-    next(new Error(err));
+    console.log("Error connecting to MongoDB:", err);
   });
