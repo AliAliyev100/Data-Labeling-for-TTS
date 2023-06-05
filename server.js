@@ -30,7 +30,7 @@ const fileStorageText = multer.diskStorage({
   },
 });
 
-const fileFilter = (req, file, cb) => {
+const fileFilterText = (req, file, cb) => {
   if (
     file.mimetype === "text/plain" ||
     file.mimetype ===
@@ -42,19 +42,28 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const uploadAudio = multer({ storage: fileStorageAudio }).single("audio");
+const fileFilterAudio = (req, file, cb) => {
+  if (file.mimetype === "audio/wav") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const uploadAudio = multer({
+  storage: fileStorageAudio,
+  fileFilter: fileFilterAudio,
+}).single("audio");
+
 const uploadText = multer({
   storage: fileStorageText,
-  fileFilter: fileFilter,
+  fileFilter: fileFilterText,
 }).single("text");
 
 app.use(express.static("public"));
 
-app.use(uploadAudio);
-app.use(audioRouter);
-
-app.use(uploadText);
-app.use(filesRouter);
+app.use("/audio", uploadAudio, audioRouter);
+app.use("/files", uploadText, filesRouter);
 
 const mongodbUri =
   "mongodb+srv://aliyevali04:5pT54lC70RpidywW@cluster0.qebtx7h.mongodb.net/tts";

@@ -168,7 +168,7 @@ async function sendToNodeJs(e) {
       formData.append("audio", audioBlob);
       formData.append("textId", textId);
 
-      fetch(baseURL, {
+      fetch("/audio" + baseURL, {
         method: "POST",
         body: formData,
       }).then((result) => {
@@ -187,7 +187,7 @@ async function sendToNodeJs(e) {
 
 const container = document.getElementById("container");
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("/label")
+  fetch("/files/label")
     .then((response) => response.json())
     .then((data) => {
       data.result.forEach((res) => {
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
         anchor.addEventListener("click", (event) => {
           event.preventDefault();
           i = 0;
-          fetch("/gettextvalues", {
+          fetch("/files/gettextvalues", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
