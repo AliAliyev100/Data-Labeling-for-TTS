@@ -9,9 +9,9 @@ exports.createAudio = (req, res, next) => {
       { new: true }
     )
     .then((updatedTextFile) => {
+      return res.json({ result: true });
     })
     .catch((error) => {
       console.error("Error updating text file:", error);
     });
-  res.json({ result: true });
 };

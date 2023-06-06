@@ -102,23 +102,23 @@ exports.getTextValues = (req, res, next) => {
       const fileitems = textDocument.fileitems;
       const items = fileitems.items;
       let currentIndex = textDocument.lastİndex;
-      console.log("before " + currentIndex);
 
       while (items[currentIndex].audioPath) {
         currentIndex++;
       }
+      console.log("\n");
       const result = items[currentIndex];
-
-      console.log("after " + currentIndex);
-
       textDocument.lastİndex = currentIndex;
-
       return textDocument.save();
     })
     .then((updatedTextDocument) => {
       res.json({
-        result: updatedTextDocument.fileitems.items[updatedTextDocument.lastİndex].text,
-        fileName: updatedTextDocument.fileitems.items[updatedTextDocument.lastİndex]._id,
+        result:
+          updatedTextDocument.fileitems.items[updatedTextDocument.lastİndex]
+            .text,
+        fileName:
+          updatedTextDocument.fileitems.items[updatedTextDocument.lastİndex]
+            ._id,
       });
     })
     .catch((err) => {
