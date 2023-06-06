@@ -167,15 +167,27 @@ async function sendToNodeJs(e) {
       const audioBlob = new File([blob], textName, { type: "audio/wav" });
       formData.append("audio", audioBlob);
       formData.append("textId", textName);
+      formData.append("filename", filename);
 
       fetch("/audio" + baseURL, {
         method: "POST",
         body: formData,
-      }).then((result) => {
-        currentRecording = document.querySelector("#audioElement");
-        currentRecording.parentNode.removeChild(currentRecording);
-        getTextValues(filename);
-      });
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          text = data.result;
+          textName = data.fileName;
+          document.getElementById("textinput").value = text;
+          recordButton.disabled = false;
+          currentRecording = document.querySelector("#audioElement");
+          currentRecording.parentNode.removeChild(currentRecording);
+        })
+        .catch((error) => {
+          console.error(
+            "An error occurred while sending the POST request:",
+            error
+          );
+        });
     })
     .catch((error) => console.error(error));
 }
@@ -185,15 +197,15 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch("/files/label")
     .then((response) => response.json())
     .then((data) => {
-      data.result.forEach((res) => {
+      data.result.forEach((fname) => {
         const anchor = document.createElement("a");
         anchor.href = "#";
-        anchor.innerHTML = res.filename;
+        anchor.innerHTML = fname;
 
         anchor.addEventListener("click", (event) => {
           event.preventDefault();
-          filename = res.filename;
-          getTextValues(res.filename);
+          filename = fname;
+          getTextValues(fname);
         });
 
         const container = document.getElementById("container");
