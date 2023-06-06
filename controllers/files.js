@@ -84,8 +84,9 @@ exports.getLabel = (req, res, next) => {
   textfile
     .find()
     .then((result) => {
+      const filenames = result.map((textfile) => textfile.filename);
       res.json({
-        result: result,
+        result: filenames,
       });
     })
     .catch((err) => {
