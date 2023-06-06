@@ -27,13 +27,4 @@ exports.createAudio = (req, res, next) => {
       next(err);
     });
 
-  // textfile
-  //   .findOneAndUpdate(
-  //     { "fileitems.items._id": textId },
-  //     { $set: { "fileitems.items.$.audioPath": "/Audios/" + textId + ".wav" } },
-  //     { new: true }
-  //   )
-  //   .catch((error) => {
-  //     console.error("Error updating text file:", error);
-  //   });
 };
