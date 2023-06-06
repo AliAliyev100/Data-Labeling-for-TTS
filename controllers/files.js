@@ -94,21 +94,31 @@ exports.getLabel = (req, res, next) => {
 };
 
 exports.getTextValues = (req, res, next) => {
-  let { filename, index } = req.body;
-  textfile
-    .find({ filename: filename })
-    .then((textDocument) => {
-      const fileitems = textDocument[0].fileitems;
-      const items = fileitems.items;
-      while (items[index].audioPath) {
-        index++;
-      }
-      const result = items[index];
+  let { filename } = req.body;
 
+  textfile
+    .findOne({ filename: filename })
+    .then((textDocument) => {
+      const fileitems = textDocument.fileitems;
+      const items = fileitems.items;
+      let currentIndex = textDocument.lastİndex;
+      console.log("before " + currentIndex);
+
+      while (items[currentIndex].audioPath) {
+        currentIndex++;
+      }
+      const result = items[currentIndex];
+
+      console.log("after " + currentIndex);
+
+      textDocument.lastİndex = currentIndex;
+
+      return textDocument.save();
+    })
+    .then((updatedTextDocument) => {
       res.json({
-        result: result.text,
-        index: index,
-        fileName: result._id,
+        result: updatedTextDocument.fileitems.items[updatedTextDocument.lastİndex].text,
+        fileName: updatedTextDocument.fileitems.items[updatedTextDocument.lastİndex]._id,
       });
     })
     .catch((err) => {

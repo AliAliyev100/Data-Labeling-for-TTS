@@ -15,6 +15,11 @@ const textfileSchema = new Schema({
     type: String,
     required: true,
   },
+  lastİndex: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   fileitems: {
     items: [
       {
@@ -23,7 +28,7 @@ const textfileSchema = new Schema({
       },
     ],
     index: {
-      type: 'string', // Specify the index type
+      type: "number",
     },
   },
 });

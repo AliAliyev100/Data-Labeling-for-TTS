@@ -5,7 +5,6 @@ var rec; //Recorder.js object
 var input; //MediaStreamAudioSourceNode we'll be recording
 let audioUrl;
 
-let index = 0;
 let text;
 let textName;
 let filename;
@@ -161,7 +160,6 @@ async function sendToNodeJs(e) {
 
   submitButton.style.display = "none";
   deleteButton.style.display = "none";
-  recordButton.disabled = false;
 
   fetch(audioFile)
     .then((response) => response.blob())
@@ -196,7 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
           event.preventDefault();
           filename = res.filename;
           getTextValues(res.filename);
-          recordButton.disabled = false;
         });
 
         const container = document.getElementById("container");
@@ -213,15 +210,16 @@ function getTextValues(filename) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ filename: filename, index: index++ }),
+    body: JSON.stringify({
+      filename: filename,
+    }),
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log(index)
-      console.log(data)
       text = data.result;
       textName = data.fileName;
       document.getElementById("textinput").value = text;
+      recordButton.disabled = false;
     })
     .catch((error) => {
       console.error("An error occurred while sending the POST request:", error);
