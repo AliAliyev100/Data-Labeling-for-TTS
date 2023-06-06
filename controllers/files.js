@@ -106,21 +106,15 @@ exports.getTextValues = (req, res, next) => {
       while (items[currentIndex].audioPath) {
         currentIndex++;
       }
-      console.log("\n");
       const result = items[currentIndex];
       textDocument.lastİndex = currentIndex;
+      res.json({
+        result: result.text,
+        fileName: result._id,
+      });
       return textDocument.save();
     })
-    .then((updatedTextDocument) => {
-      res.json({
-        result:
-          updatedTextDocument.fileitems.items[updatedTextDocument.lastİndex]
-            .text,
-        fileName:
-          updatedTextDocument.fileitems.items[updatedTextDocument.lastİndex]
-            ._id,
-      });
-    })
+    .then((updatedTextDocument) => {})
     .catch((err) => {
       next(err);
     });
