@@ -33,3 +33,6 @@ const textfileSchema = new Schema({
   },
 });
 module.exports = mongoose.model("textfile", textfileSchema);
+
+// db.textfiles.find({}, { "fileitems.items": { $slice: 100 } })
+// access from shell
