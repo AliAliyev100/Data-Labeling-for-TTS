@@ -1,17 +1,39 @@
-const textfile = require("../models/textfile")
+const textfile = require("../models/textfile");
 
 exports.createAudio = (req, res, next) => {
-  const textId = req.body.textId;
+  const { textId, filename } = req.body;
+
   textfile
-    .findOneAndUpdate(
-      { "fileitems.items._id": textId },
-      { $set: { "fileitems.items.$.audioPath": "/Audios/" + textId + ".wav" } },
-      { new: true }
-    )
-    .then((updatedTextFile) => {
-      return res.json({ result: true });
+    .findOne({ filename: filename })
+    .then((textDocument) => {
+      const fileitems = textDocument.fileitems;
+      const items = fileitems.items;
+      let currentIndex = textDocument.lastİndex;
+      items[currentIndex].audioPath = "/Audios/" + textId + ".wav";
+
+      while (items[currentIndex].audioPath) {
+        currentIndex++;
+      }
+      const result = items[currentIndex];
+      textDocument.lastİndex = currentIndex;
+      res.json({
+        result: result.text,
+        fileName: result._id,
+      });
+      return textDocument.save();
     })
-    .catch((error) => {
-      console.error("Error updating text file:", error);
+    .then((updatedTextDocument) => {})
+    .catch((err) => {
+      next(err);
     });
+
+  // textfile
+  //   .findOneAndUpdate(
+  //     { "fileitems.items._id": textId },
+  //     { $set: { "fileitems.items.$.audioPath": "/Audios/" + textId + ".wav" } },
+  //     { new: true }
+  //   )
+  //   .catch((error) => {
+  //     console.error("Error updating text file:", error);
+  //   });
 };
