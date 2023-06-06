@@ -213,10 +213,12 @@ function getTextValues(filename) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ filename: filename, index: index }),
+    body: JSON.stringify({ filename: filename, index: index++ }),
   })
     .then((response) => response.json())
     .then((data) => {
+      console.log(index)
+      console.log(data)
       text = data.result;
       textName = data.fileName;
       document.getElementById("textinput").value = text;

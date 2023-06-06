@@ -18,11 +18,13 @@ const textfileSchema = new Schema({
   fileitems: {
     items: [
       {
-        audioPath: { type: String, default: ""},
+        audioPath: { type: String, default: "" },
         text: { type: String, required: true },
       },
     ],
+    index: {
+      type: 'string', // Specify the index type
+    },
   },
 });
-
 module.exports = mongoose.model("textfile", textfileSchema);
