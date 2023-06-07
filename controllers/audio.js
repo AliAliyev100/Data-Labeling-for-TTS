@@ -9,6 +9,16 @@ exports.createAudio = (req, res, next) => {
       const fileitems = textDocument.fileitems;
       const items = fileitems.items;
       let currentIndex = textDocument.lastİndex;
+      console.log(items[currentIndex]._id.toString());
+      console.log(textId.toString() + "\n");
+
+      if (items[currentIndex]._id.toString() !== textId.toString()) {
+        return res.json({
+          result: items[currentIndex].text,
+          fileName: items[currentIndex]._id,
+        });
+      }
+
       items[currentIndex].audioPath = "/Audios/" + textId + ".wav";
 
       while (items[currentIndex].audioPath) {
@@ -26,5 +36,4 @@ exports.createAudio = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
-
 };
