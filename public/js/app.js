@@ -202,11 +202,16 @@ document.addEventListener("DOMContentLoaded", () => {
         anchor.href = "#";
         anchor.innerHTML = fname;
 
-        anchor.addEventListener("click", (event) => {
+        const handleClick = (event) => {
           event.preventDefault();
           filename = fname;
           getTextValues(fname);
-        });
+        
+          // Remove the click event listener
+          anchor.removeEventListener("click", handleClick);
+        };
+        
+        anchor.addEventListener("click", handleClick);
 
         const container = document.getElementById("container");
         container.appendChild(document.createElement("br"));
