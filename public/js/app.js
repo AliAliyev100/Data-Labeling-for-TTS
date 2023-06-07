@@ -206,18 +206,18 @@ document.addEventListener("DOMContentLoaded", () => {
           event.preventDefault();
           filename = fname;
           getTextValues(fname);
-        
-          // Remove the click event listener
+
           anchor.removeEventListener("click", handleClick);
+          anchor.removeAttribute("href");
         };
-        
+
         anchor.addEventListener("click", handleClick);
 
         const container = document.getElementById("container");
         container.appendChild(document.createElement("br"));
         container.appendChild(anchor);
       });
-    })
+    })  
     .catch((error) => console.error(error));
 });
 
