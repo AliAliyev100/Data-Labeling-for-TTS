@@ -243,7 +243,8 @@ function getTextValues(filename) {
       skipButton.disabled = false;
       if (text.trim() === "Tebrikler! Butun Cumleleri Bitirdiniz!") {
         recordButton.disabled = true;
-        skipButton.disabled = true;``
+        skipButton.disabled = true;
+        ``;
       }
     })
     .catch((error) => {
