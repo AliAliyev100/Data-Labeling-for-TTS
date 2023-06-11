@@ -56,7 +56,7 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin: 20px 0px;
 }
 
 #textinput {
@@ -74,6 +74,10 @@ button:disabled {
 
 #submitButton {
   background-color: #4CAF50;
+}
+
+#container {
+  text-align: center;
 }
 
 #container a {

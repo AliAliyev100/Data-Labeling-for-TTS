@@ -6,19 +6,19 @@ var input; //MediaStreamAudioSourceNode we'll be recording
 let audioUrl;
 
 let text;
-let textName;
+let textId;
 let filename;
 
 // shim for AudioContext when it's not avb.
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext; //audio context to help us record
 
-var recordButton = document.getElementById("recordButton");
-var stopButton = document.getElementById("stopButton");
-var pauseButton = document.getElementById("pauseButton");
-var submitButton = document.getElementById("submitButton");
-var deleteButton = document.getElementById("deleteButton");
-
+let recordButton = document.getElementById("recordButton");
+let stopButton = document.getElementById("stopButton");
+let pauseButton = document.getElementById("pauseButton");
+let submitButton = document.getElementById("submitButton");
+let deleteButton = document.getElementById("deleteButton");
+let skipButton = document.getElementById("skipButton");
 let currentRecording = document.querySelector("#audioElement");
 
 recordButton.disabled = true;
@@ -38,8 +38,6 @@ function deleteRecording() {
   recordButton.disabled = false;
   submitButton.style.display = "none";
   deleteButton.style.display = "none";
-  document.getElementById("result").style.display = "none";
-  document.getElementById("azureResult").style.display = "none";
 }
 
 submitButton.style.display = "none";
@@ -164,9 +162,10 @@ async function sendToNodeJs(e) {
   fetch(audioFile)
     .then((response) => response.blob())
     .then((blob) => {
-      const audioBlob = new File([blob], textName, { type: "audio/wav" });
+      const audioBlob = new File([blob], textId, { type: "audio/wav" });
+
       formData.append("audio", audioBlob);
-      formData.append("textId", textName);
+      formData.append("textId", textId);
       formData.append("filename", filename);
 
       fetch("/audio" + baseURL, {
@@ -176,11 +175,16 @@ async function sendToNodeJs(e) {
         .then((response) => response.json())
         .then((data) => {
           text = data.result;
-          textName = data.fileName;
+          textId = data.fileName;
           document.getElementById("textinput").value = text;
           recordButton.disabled = false;
           currentRecording = document.querySelector("#audioElement");
           currentRecording.parentNode.removeChild(currentRecording);
+
+          if (text.trim() === "Tebrikler! Butun Cumleleri Bitirdiniz!") {
+            recordButton.disabled = true;
+            skipButton.disabled = true;
+          }
         })
         .catch((error) => {
           console.error(
@@ -206,18 +210,17 @@ document.addEventListener("DOMContentLoaded", () => {
           event.preventDefault();
           filename = fname;
           getTextValues(fname);
-
-          anchor.removeEventListener("click", handleClick);
-          anchor.removeAttribute("href");
+          recordingsList.innerHTML = "";
+          container.innerHTML = "";
         };
 
         anchor.addEventListener("click", handleClick);
 
-        const container = document.getElementById("container");
+        container.appendChild(document.createElement("br"));
         container.appendChild(document.createElement("br"));
         container.appendChild(anchor);
       });
-    })  
+    })
     .catch((error) => console.error(error));
 });
 
@@ -234,11 +237,49 @@ function getTextValues(filename) {
     .then((response) => response.json())
     .then((data) => {
       text = data.result;
-      textName = data.fileName;
+      textId = data.fileName;
       document.getElementById("textinput").value = text;
       recordButton.disabled = false;
+      skipButton.disabled = false;
+      if (text.trim() === "Tebrikler! Butun Cumleleri Bitirdiniz!") {
+        recordButton.disabled = true;
+        skipButton.disabled = true;``
+      }
     })
     .catch((error) => {
       console.error("An error occurred while sending the POST request:", error);
     });
 }
+
+skipButton.addEventListener("click", (event) => {
+  submitButton.style.display = "none";
+  deleteButton.style.display = "none";
+  fetch("/audio/skip", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      textId: textId,
+      filename: filename,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      text = data.result;
+      textId = data.fileName;
+      document.getElementById("textinput").value = text;
+      recordButton.disabled = false;
+      currentRecording = document.querySelector("#audioElement");
+      currentRecording.parentNode.removeChild(currentRecording);
+
+      if (text.trim() === "Tebrikler! Butun Cumleleri Bitirdiniz!") {
+        recordButton.disabled = true;
+        skipButton.disabled = true;
+      }
+    })
+    .catch((error) => {
+      console.error("An error occurred while sending the POST request:", error);
+    });
+});

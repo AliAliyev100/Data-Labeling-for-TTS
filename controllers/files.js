@@ -104,10 +104,11 @@ exports.getTextValues = (req, res, next) => {
       const items = fileitems.items;
       let currentIndex = textDocument.lastİndex;
 
-      while (items[currentIndex].audioPath) {
+      while (items[currentIndex] && items[currentIndex].audioPath) {
         currentIndex++;
       }
-      const result = items[currentIndex];
+
+      const result = (textDocument.lastİndex !== items.length) ? items[currentIndex] : {text: "Tebrikler! Butun Cumleleri Bitirdiniz!", fileName: "finished"};
       textDocument.lastİndex = currentIndex;
       res.json({
         result: result.text,
