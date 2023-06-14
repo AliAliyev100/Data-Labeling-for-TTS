@@ -16,8 +16,17 @@
   text-align: center;
   padding: 16px 20px; 
   text-decoration: none;
+  background-color: #333;
 }
 
 .nav-link:hover {
   background-color: #555;
+}
+
+#logoutTag{
+  display: none;
+}
+
+#logoutTag:hover {
+  cursor: pointer;
 }
