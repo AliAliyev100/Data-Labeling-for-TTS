@@ -1,17 +1,34 @@
 const express = require("express");
 const multer = require("multer");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const fs = require("fs");
 
 const textfile = require("./models/textfile");
+const User = require("./models/user");
+
 const audioRouter = require("./routes/audio");
 const filesRouter = require("./routes/files");
+const authRouter = require("./routes/auth");
+
+const isAuth = require("./middleware/is-auth");
 
 const app = express();
 app.use(express.json());
 
 const fileStorageAudio = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "Audios");
+    let folderName;
+    return User.findById(req.userId)
+      .then((user) => {
+        folderName = "Audios/" + user.name + "_audios";
+        if (!fs.existsSync(folderName)) {
+          fs.mkdirSync(folderName);
+        }
+      })
+      .then((result) => {
+        cb(null, folderName);
+      });
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname + ".wav");
@@ -62,8 +79,19 @@ const uploadText = multer({
 
 app.use(express.static("public"));
 
-app.use("/audio", uploadAudio, audioRouter);
+app.use("/audio", isAuth, uploadAudio, audioRouter);
 app.use("/files", uploadText, filesRouter);
+app.use("/auth", authRouter);
+
+authRouter;
+
+app.use((error, req, res, next) => {
+  const status = error.status || 500;
+  const message = error.message;
+  const data = error.data;
+  // res.redirect("./error.html")
+  res.status(status).json({ message: message, data: data });
+});
 
 const mongoURI = "mongodb://127.0.0.1:27017/tts";
 
