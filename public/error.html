@@ -5,20 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="css/nav-css.css" />
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="js/checkLogin.js" defer></script>
     <title>Error</title>
   </head>
   <body>
     <ul class="nav">
-      <ul class="nav">
-        <li class="nav-item">
-          <a href="/index.html" class="nav-link">Upload text item</a>
-        </li>
-        <li class="nav-item">
-          <a href="/label.html" class="nav-link">Label</a>
-        </li>
-      </ul>
+      <li class="nav-item">
+        <a class="nav-link" id="logoutTag">Sign-out</a>
+      </li>
+      <li class="nav-item">
+        <a href="/login.html" class="nav-link" id="loginTag">Login</a>
+      </li>
+      <li class="nav-item">
+        <a href="/index.html" class="nav-link">Upload text item</a>
+      </li>
+      <li class="nav-item">
+        <a href="/label.html" class="nav-link" id="labelTag">Label</a>
+      </li>
+    </ul>
     <p id="errorMessage"></p>
   </body>
   <script>

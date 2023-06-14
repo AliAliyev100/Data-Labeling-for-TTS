@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" type="text/css" href="css/nav-css.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="js/checkLogin.js" defer></script>
     <script src="js/recorder.js" defer></script>
     <script src="js/app.js" defer></script>
 
@@ -15,10 +16,16 @@
   <body>
     <ul class="nav">
       <li class="nav-item">
+        <a class="nav-link" id = "logoutTag"> Sign-out</a>
+      </li>
+      <li class="nav-item">
+        <a href="/login.html" class="nav-link" id = "loginTag">Login</a>
+      </li>
+      <li class="nav-item">
         <a href="/index.html" class="nav-link">Upload text item</a>
       </li>
       <li class="nav-item">
-        <a href="/label.html" class="nav-link">Label</a>
+        <a href="/label.html" class="nav-link" id="labelTag">Label</a>
       </li>
     </ul>
 
@@ -34,7 +41,6 @@
 
       <div id="controls">
         <button id="recordButton">Record</button>
-        <button id="pauseButton" disabled>Pause</button>
         <button id="stopButton" disabled>Stop</button>
         <button id="skipButton" disabled>Skip</button>
       </div>

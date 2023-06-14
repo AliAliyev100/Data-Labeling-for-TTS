@@ -1,31 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" type="text/css" href="css/nav-css.css">
-  <link rel="stylesheet" type="text/css" href="css/index.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="css/nav-css.css" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <script src="js/checkLogin.js" defer></script>
+  </head>
+  <body>
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" id = "logoutTag"> Sign-out</a>
+      </li>
+      <li class="nav-item">
+        <a href="/login.html" class="nav-link" id="loginTag">Login</a>
+      </li>
+      <li class="nav-item">
+        <a href="/index.html" class="nav-link">Upload text item</a>
+      </li>
+      <li class="nav-item">
+        <a href="/label.html" class="nav-link" id="labelTag">Label</a>
+      </li>
+    </ul>
 
-</head>
-<body>
-  <ul class="nav">
-    <li class="nav-item">
-      <a href="/index.html" class="nav-link">Upload text item</a>
-    </li>
-    <li class="nav-item">
-      <a href="/label.html" class="nav-link">Label</a>
-    </li>
-  </ul>
+    <form
+      action="files/add-item-text"
+      method="POST"
+      enctype="multipart/form-data"
+      class="product-form"
+    >
+      <div class="form-control">
+        <label for="text">Text</label>
+        <input type="file" name="text" id="text" accept=".docx,.txt" />
+      </div>
 
-  <form action="files/add-item-text" method="POST" enctype="multipart/form-data" class="product-form">
-    <div class="form-control">
-      <label for="text">Text</label>
-      <input type="file" name="text" id="text" accept=".docx,.txt">
-    </div>
-
-    <button class="btn" type="submit">Submit</button>
-  </form>
-</body>
-</html>  
+      <button class="btn" type="submit">Submit</button>
+    </form>
+  </body>
+</html>
