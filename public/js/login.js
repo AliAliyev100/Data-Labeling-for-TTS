@@ -17,7 +17,7 @@ loginButton.addEventListener("click", function (event) {
   })
     .then((response) => {
       if (response.status === 401) {
-        window.location.pathname = "/login.html";
+        window.location.pathname = "/index.html";
         return 0;
       }
       return response.json();

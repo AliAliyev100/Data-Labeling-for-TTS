@@ -95,9 +95,19 @@ app.use((error, req, res, next) => {
 
 const mongoURI = "mongodb://127.0.0.1:27017/tts";
 
+const password = "Samir123";
+
 mongoose
   .connect(mongoURI)
   .then(() => {
+    bcrypt.hash(password, 12).then((hashedPassword) => {
+      const user = new User({
+        password: hashedPassword,
+        name: "SamirRustamov",
+      });
+      return user.save();
+    });
+
     app.listen(3000);
   })
   .catch((err) => {

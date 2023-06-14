@@ -1,16 +1,18 @@
 const logoutTag = document.getElementById("logoutTag");
 const labelTag = document.getElementById("labelTag");
+const uploadTag = document.getElementById("uploadTag");
 
 let tokenCheck = localStorage.getItem("token");
 const expiryDate = localStorage.getItem("expiryDate");
+uploadTag.style.display = "none";
 
 if (
   tokenCheck &&
   expiryDate &&
   new Date(expiryDate) > new Date() &&
-  window.location.pathname === "/login.html"
+  window.location.pathname === "/index.html"
 ) {
-  window.location.pathname = "/index.html";
+  window.location.pathname = "/label.html";
 }
 
 if (tokenCheck && expiryDate && new Date(expiryDate) > new Date()) {
