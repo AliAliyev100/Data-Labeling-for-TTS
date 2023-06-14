@@ -1,6 +1,8 @@
 const mammoth = require("mammoth");
 const fs = require("fs");
-const textfile = require("../models/textfile");
+
+const Textfile = require("../models/textfile");
+const User = require("../models/user");
 
 const addTextToDatabase = (filedata, file) => {
   const files = filedata
@@ -11,7 +13,7 @@ const addTextToDatabase = (filedata, file) => {
     });
 
   const fileitems = files.map((text) => ({ text }));
-  const textFile = new textfile({
+  const textFile = new Textfile({
     filename: file.filename,
     originalFilename: file.originalname,
     fileLocation: file.path,
@@ -80,44 +82,40 @@ exports.addItemText = (req, res, next) => {
   });
 };
 
-exports.getLabel = (req, res, next) => {
-  textfile
-    .find()
-    .then((result) => {
-      const filenames = result.map((textfile) => textfile.filename);
-      res.json({
-        result: filenames,
-      });
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
-
 exports.getTextValues = (req, res, next) => {
-  let { filename } = req.body;
+  User.findById(req.userId)
+    .then((user) => {
+      Textfile.findById(user.textfile).then((textDocument) => {
+        if (!textDocument) {
+          const err = new Error("No textdocument belonging to user");
+          return next(err);
+        }
 
-  textfile
-    .findOne({ filename: filename })
-    .then((textDocument) => {
-      const fileitems = textDocument.fileitems;
-      const items = fileitems.items;
-      let currentIndex = textDocument.lastİndex;
+        const fileitems = textDocument.fileitems;
+        const items = fileitems.items;
+        let currentIndex = textDocument.lastİndex;
 
-      while (items[currentIndex] && items[currentIndex].audioPath) {
-        currentIndex++;
-      }
+        while (items[currentIndex] && items[currentIndex].audioPath) {
+          currentIndex++;
+        }
 
-      const result = (textDocument.lastİndex !== items.length) ? items[currentIndex] : {text: "Tebrikler! Butun Cumleleri Bitirdiniz!", fileName: "finished"};
-      textDocument.lastİndex = currentIndex;
-      res.json({
-        result: result.text,
-        fileName: result._id,
+        const result =
+          textDocument.lastİndex !== items.length
+            ? items[currentIndex]
+            : {
+                text: "Tebrikler! Butun Cumleleri Bitirdiniz!",
+                fileName: "finished",
+              };
+        textDocument.lastİndex = currentIndex;
+        res.json({
+          result: result.text,
+          fileName: result._id,
+        });
+        return textDocument.save();
       });
-      return textDocument.save();
     })
     .then((updatedTextDocument) => {})
     .catch((err) => {
       next(err);
     });
-};
+  };

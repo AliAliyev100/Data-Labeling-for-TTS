@@ -1,11 +1,19 @@
 const textfile = require("../models/textfile");
+const User = require("../models/user");
 
 exports.createAudio = (req, res, next) => {
-  const { textId, filename } = req.body;
+  const { textId } = req.body;
 
-  textfile
-    .findOne({ filename: filename })
+  User.findById(req.userId)
+    .then((user) => {
+      return textfile.findById(user.textfile);
+    })
     .then((textDocument) => {
+      if (!textDocument) {
+        const err = new Error("No textdocument belonging to user");
+        return next(err);
+      }
+
       const fileitems = textDocument.fileitems;
       const items = fileitems.items;
       let currentIndex = textDocument.lastİndex;
@@ -21,10 +29,7 @@ exports.createAudio = (req, res, next) => {
 
       items[currentIndex].audioPath = "/Audios/" + textId + ".wav";
 
-      console.log(items[currentIndex].audioPath);
-
       while (items[currentIndex] && items[currentIndex].audioPath) {
-        console.log("here");
         currentIndex++;
       }
       const result =
@@ -40,21 +45,26 @@ exports.createAudio = (req, res, next) => {
         fileName: result._id,
       });
       return textDocument.save();
-    })
-    .then((updatedTextDocument) => {})
-    .catch((err) => {
-      next(err);
     });
 };
 
 exports.skipAudio = (req, res, next) => {
-  const { textId, filename } = req.body;
 
-  textfile
-    .findOne({ filename: filename })
+  User.findById(req.userId)
+    .then((user) => {
+      return textfile.findById(user.textfile);
+    })
     .then((textDocument) => {
+
+
+      if (!textDocument) {
+        const err = new Error("No textdocument belonging to user");
+        return next(err);
+      }
+
       const items = textDocument.fileitems.items;
       let currentIndex = textDocument.lastİndex;
+
       items[currentIndex].audioPath = "Undefined";
       textDocument.lastİndex++;
       currentIndex++;
