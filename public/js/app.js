@@ -9,13 +9,14 @@ let text;
 let textId;
 let filename;
 
+let token;
+
 // shim for AudioContext when it's not avb.
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext; //audio context to help us record
 
 let recordButton = document.getElementById("recordButton");
 let stopButton = document.getElementById("stopButton");
-let pauseButton = document.getElementById("pauseButton");
 let submitButton = document.getElementById("submitButton");
 let deleteButton = document.getElementById("deleteButton");
 let skipButton = document.getElementById("skipButton");
@@ -26,7 +27,6 @@ recordButton.disabled = true;
 //add events to those 2 buttons
 recordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", stopRecording);
-pauseButton.addEventListener("click", pauseRecording);
 submitButton.addEventListener("click", testRecording);
 deleteButton.addEventListener("click", deleteRecording);
 
@@ -49,7 +49,7 @@ function startRecording() {
 
   recordButton.disabled = true;
   stopButton.disabled = false;
-  pauseButton.disabled = false;
+  skipButton.disabled = true;
 
   navigator.mediaDevices
     .getUserMedia(constraints)
@@ -72,29 +72,27 @@ function startRecording() {
     .catch(function (err) {
       recordButton.disabled = false;
       stopButton.disabled = true;
-      pauseButton.disabled = true;
     });
 }
 
-function pauseRecording() {
-  console.log("pauseButton clicked rec.recording=", rec.recording);
-  if (rec.recording) {
-    rec.stop();
-    pauseButton.innerHTML = "Resume";
-  } else {
-    rec.record();
-    pauseButton.innerHTML = "Pause";
-  }
-}
+// function pauseRecording() {
+//   console.log("pauseButton clicked rec.recording=", rec.recording);
+//   if (rec.recording) {
+//     rec.stop();
+//     pauseButton.innerHTML = "Resume";
+//   } else {
+//     rec.record();
+//     pauseButton.innerHTML = "Pause";
+//   }
+// }
 
 function stopRecording() {
   console.log("stopButton clicked");
 
   stopButton.disabled = true;
   recordButton.disabled = true;
-  pauseButton.disabled = true;
+  skipButton.disabled = false;
 
-  pauseButton.innerHTML = "Pause";
   console.log(rec);
 
   rec.stop();
@@ -158,6 +156,7 @@ async function sendToNodeJs(e) {
 
   submitButton.style.display = "none";
   deleteButton.style.display = "none";
+  token = localStorage.getItem("token");
 
   fetch(audioFile)
     .then((response) => response.blob())
@@ -170,6 +169,9 @@ async function sendToNodeJs(e) {
 
       fetch("/audio" + baseURL, {
         method: "POST",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
         body: formData,
       })
         .then((response) => response.json())
@@ -197,44 +199,29 @@ async function sendToNodeJs(e) {
 }
 
 const container = document.getElementById("container");
+token = localStorage.getItem("token");
+
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("/files/label")
-    .then((response) => response.json())
-    .then((data) => {
-      data.result.forEach((fname) => {
-        const anchor = document.createElement("a");
-        anchor.href = "#";
-        anchor.innerHTML = fname;
-
-        const handleClick = (event) => {
-          event.preventDefault();
-          filename = fname;
-          getTextValues(fname);
-          recordingsList.innerHTML = "";
-          container.innerHTML = "";
-        };
-
-        anchor.addEventListener("click", handleClick);
-
-        container.appendChild(document.createElement("br"));
-        container.appendChild(document.createElement("br"));
-        container.appendChild(anchor);
-      });
-    })
-    .catch((error) => console.error(error));
+  getTextValues();
 });
 
-function getTextValues(filename) {
+function getTextValues() {
+  token = localStorage.getItem("token");
+
   fetch("/files/gettextvalues", {
-    method: "POST",
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
     },
-    body: JSON.stringify({
-      filename: filename,
-    }),
   })
-    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+      if (response.status === 401) {
+        return (window.location.pathname = "/index.html");
+      }
+      return response.json();
+    })
     .then((data) => {
       text = data.result;
       textId = data.fileName;
@@ -255,19 +242,24 @@ function getTextValues(filename) {
 skipButton.addEventListener("click", (event) => {
   submitButton.style.display = "none";
   deleteButton.style.display = "none";
+  token = localStorage.getItem("token");
+
   fetch("/audio/skip", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
     },
-    body: JSON.stringify({
-      textId: textId,
-      filename: filename,
-    }),
   })
-    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+      if (response.status === "401") {
+        return (window.location.pathname = "/index.html");
+      }
+
+      return response.json();
+    })
     .then((data) => {
-      console.log(data);
       text = data.result;
       textId = data.fileName;
       document.getElementById("textinput").value = text;
