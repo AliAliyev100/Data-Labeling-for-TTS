@@ -9,9 +9,11 @@ const User = require("./models/user");
 
 const audioRouter = require("./routes/audio");
 const filesRouter = require("./routes/files");
+const adminRouter = require("./routes/admin");
 const authRouter = require("./routes/auth");
 
 const isAuth = require("./middleware/is-auth");
+const isAdmin = require("./middleware/is-admin");
 
 const app = express();
 app.use(express.json());
@@ -80,7 +82,8 @@ const uploadText = multer({
 app.use(express.static("public"));
 
 app.use("/audio", isAuth, uploadAudio, audioRouter);
-app.use("/files", uploadText, filesRouter);
+app.use("/files", isAuth, uploadText, filesRouter);
+app.use("/admin", isAuth, isAdmin, uploadText, adminRouter);
 app.use("/auth", authRouter);
 
 authRouter;
@@ -95,18 +98,19 @@ app.use((error, req, res, next) => {
 
 const mongoURI = "mongodb://127.0.0.1:27017/tts";
 
-const password = "Samir123";
+const password = "AdminAliyev1!";
 
 mongoose
   .connect(mongoURI)
   .then(() => {
-    bcrypt.hash(password, 12).then((hashedPassword) => {
-      const user = new User({
-        password: hashedPassword,
-        name: "SamirRustamov",
-      });
-      return user.save();
-    });
+    // bcrypt.hash(password, 12).then((hashedPassword) => {
+    //   const user = new User({
+    //     password: hashedPassword,
+    //     name: "Ali",
+    //     isAdmin: true
+    //   });
+    //   return user.save();
+    // });
 
     app.listen(3000);
   })

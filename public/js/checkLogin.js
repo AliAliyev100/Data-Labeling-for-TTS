@@ -10,7 +10,8 @@ if (
   tokenCheck &&
   expiryDate &&
   new Date(expiryDate) > new Date() &&
-  window.location.pathname === "/index.html"
+  (window.location.pathname === "/index.html" ||
+    window.location.pathname === "/")
 ) {
   window.location.pathname = "/label.html";
 }

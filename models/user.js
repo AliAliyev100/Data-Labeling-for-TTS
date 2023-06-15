@@ -20,6 +20,10 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "textfile",
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);
