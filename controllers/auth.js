@@ -40,6 +40,7 @@ exports.login = (req, res, next) => {
           loginToken: token,
           userId: loadedUser._id.toString(),
           expiryDate: expiryDate,
+          isAdmin: user.isAdmin
         });
       });
     })

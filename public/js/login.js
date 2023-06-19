@@ -30,6 +30,7 @@ loginButton.addEventListener("click", function (event) {
       localStorage.setItem("token", data.loginToken);
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("expiryDate", data.expiryDate);
+      localStorage.setItem("isAdmin", data.isAdmin);
     })
     .catch((error) => {
       console.error("An error occurred while sending the POST request:", error);
