@@ -2,6 +2,7 @@ const mammoth = require("mammoth");
 const fs = require("fs");
 
 const Textfile = require("../models/textfile");
+const textfile = require("../models/textfile");
 
 const addTextToDatabase = (filedata, file) => {
   const files = filedata
@@ -80,3 +81,94 @@ exports.addItemText = (req, res, next) => {
     }
   });
 };
+
+exports.getPanel = (req, res, next) => {
+  const page = req.query.page;
+
+  let allFiles = [];
+  const limit = 2;
+  let total = 0;
+  let cnt = 0;
+
+  const passAmount = (page - 1) * limit || 0;
+  let passCounter = 0;
+  textfile
+    .find()
+    .then((textfiles) => {
+      textfiles.forEach((textfile) => {
+        total += textfile.lastIndex;
+      });
+
+      textfiles.forEach((textfile) => {
+        for (let i = 0; i < textfile.lastIndex; i++) {
+          passCounter++;
+          if (passCounter <= passAmount) {
+            continue;
+          }
+          const item = textfile.fileitems.items[i];
+          allFiles.push({
+            filename: textfile.filename,
+            audioPath: item.audioPath,
+            text: item.text,
+            createdAt: item.createdAt,
+          });
+          cnt++;
+          if (cnt >= limit) {
+            break;
+          }
+        }
+      });
+      res.json({ allFiles: allFiles, pages: Math.ceil(total / limit) });
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+};
+
+// exports.getPanel = async (req, res, next) => {
+//   try {
+//     const result = await Textfile.aggregate([
+//       {
+//         $group: {
+//           _id: null,
+//           mergedItems: {
+//             $push: {
+//               filename: "$filename",
+//               items: "$fileitems.items",
+//             },
+//           },
+//         },
+//       },
+//       {
+//         $project: {
+//           _id: 0,
+//           mergedItems: {
+//             $reduce: {
+//               input: "$mergedItems",
+//               initialValue: [],
+//               in: {
+//                 $concatArrays: [
+//                   "$$value",
+//                   {
+//                     $map: {
+//                       input: "$$this.items",
+//                       as: "item",
+//                       in: {
+//                         filename: "$$this.filename",
+//                         item: "$$item",
+//                       },
+//                     },
+//                   },
+//                 ],
+//               },
+//             },
+//           },
+//         },
+//       },
+//     ]).exec();
+//     res.json(result[0].mergedItems);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
