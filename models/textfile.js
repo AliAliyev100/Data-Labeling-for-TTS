@@ -25,6 +25,7 @@ const textfileSchema = new Schema({
       {
         audioPath: { type: String, default: "" },
         text: { type: String, required: true },
+        createdAt: { type: Date },
       },
     ],
     index: {
