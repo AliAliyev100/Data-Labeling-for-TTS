@@ -4,12 +4,15 @@ const User = require("../models/user");
 exports.createAudio = (req, res, next) => {
   const { textId } = req.body;
 
+  let currentUser;
+
   User.findById(req.userId)
     .then((user) => {
       if (!user) {
         const err = new Error("No user found!");
         return next(err);
       }
+      currentUser = user;
       return textfile.findById(user.textfile);
     })
     .then((textDocument) => {
@@ -20,7 +23,7 @@ exports.createAudio = (req, res, next) => {
 
       const fileitems = textDocument.fileitems;
       const items = fileitems.items;
-      let currentIndex = textDocument.lastİndex;
+      let currentIndex = textDocument.lastIndex;
       console.log(items[currentIndex]._id.toString());
       console.log(textId.toString() + "\n");
 
@@ -31,7 +34,8 @@ exports.createAudio = (req, res, next) => {
         });
       }
 
-      items[currentIndex].audioPath = textId + ".wav";
+      items[currentIndex].audioPath =
+        "Audios/" + currentUser.name + "_audios/" + textId + ".wav";
       items[currentIndex].createdAt = new Date(
         new Date().getTime() + 4 * 60 * 60 * 1000
       );
@@ -40,13 +44,13 @@ exports.createAudio = (req, res, next) => {
         currentIndex++;
       }
       const result =
-        textDocument.lastİndex !== items.length
+        textDocument.lastIndex !== items.length
           ? items[currentIndex]
           : {
               text: "Tebrikler! Butun Cumleleri Bitirdiniz!",
               fileName: "finished",
             };
-      textDocument.lastİndex = currentIndex;
+      textDocument.lastIndex = currentIndex;
       res.json({
         result: result.text,
         fileName: result._id,
@@ -67,15 +71,15 @@ exports.skipAudio = (req, res, next) => {
       }
 
       const items = textDocument.fileitems.items;
-      let currentIndex = textDocument.lastİndex;
+      let currentIndex = textDocument.lastIndex;
 
       items[currentIndex].audioPath = "Undefined";
       items[currentIndex].createdAt = null;
 
-      textDocument.lastİndex++;
+      textDocument.lastIndex++;
       currentIndex++;
       const result =
-        textDocument.lastİndex !== items.length
+        textDocument.lastIndex !== items.length
           ? items[currentIndex]
           : {
               text: "Tebrikler! Butun Cumleleri Bitirdiniz!",

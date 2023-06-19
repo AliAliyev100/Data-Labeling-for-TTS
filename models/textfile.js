@@ -15,7 +15,7 @@ const textfileSchema = new Schema({
     type: String,
     required: true,
   },
-  lastİndex: {
+  lastIndex: {
     type: Number,
     required: true,
     default: 0,
