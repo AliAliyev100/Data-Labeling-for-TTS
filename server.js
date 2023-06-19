@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const mongoose = require("mongoose");
+const path = require("path");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 
@@ -80,6 +81,7 @@ const uploadText = multer({
 }).single("text");
 
 app.use(express.static("public"));
+app.use("/audios", express.static(path.join(__dirname, "Audios")));
 
 app.use("/audio", isAuth, uploadAudio, audioRouter);
 app.use("/files", isAuth, uploadText, filesRouter);
