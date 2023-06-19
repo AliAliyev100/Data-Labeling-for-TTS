@@ -28,7 +28,9 @@ exports.createAudio = (req, res, next) => {
       }
 
       items[currentIndex].audioPath = textId + ".wav";
-      items[currentIndex].createdAt = Date.now();
+      items[currentIndex].createdAt = new Date(
+        new Date().getTime() + 4 * 60 * 60 * 1000
+      );
 
       while (items[currentIndex] && items[currentIndex].audioPath) {
         currentIndex++;
@@ -50,7 +52,6 @@ exports.createAudio = (req, res, next) => {
 };
 
 exports.skipAudio = (req, res, next) => {
-  
   User.findById(req.userId)
     .then((user) => {
       return textfile.findById(user.textfile);
