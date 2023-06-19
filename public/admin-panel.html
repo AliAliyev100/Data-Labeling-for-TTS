@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel</title>
     <link rel="stylesheet" type="text/css" href="css/nav-css.css" />
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
     <script src="js/checkLogin.js" defer></script>
-    <title>Error</title>
+    <script src="js/admin.js" defer></script>
   </head>
   <body>
     <ul class="nav" id="navbar">
@@ -21,15 +20,5 @@
         <a class="nav-link" id="logoutTag">Sign-out</a>
       </li>
     </ul>
-    <p id="errorMessage"></p>
   </body>
-  <script>
-    // Retrieve the error message from the query parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const errorMessage = urlParams.get("message");
-
-    // Set the error message in the paragraph element
-    const errorMessageElement = document.getElementById("errorMessage");
-    errorMessageElement.textContent = errorMessage;
-  </script>
 </html>

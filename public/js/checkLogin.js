@@ -2,13 +2,10 @@ const navbar = document.getElementById("navbar");
 
 const logoutTag = document.getElementById("logoutTag");
 const labelTag = document.getElementById("labelTag");
-const uploadTag = document.getElementById("uploadTag");
 
 let tokenCheck = localStorage.getItem("token");
 const expiryDate = localStorage.getItem("expiryDate");
 const isAdmin = localStorage.getItem("isAdmin");
-
-uploadTag.style.display = "none";
 
 if (
   tokenCheck &&
@@ -36,16 +33,29 @@ logoutTag.addEventListener("click", function (event) {
   window.location.pathname = "/index.html";
 });
 
+const createLink = (href, id, content) => {
+  let newItem = document.createElement("li");
+  newItem.classList.add("nav-item");
+  const newLink = document.createElement("a");
+  newLink.href = "/" + href;
+  newLink.classList.add("nav-link");
+  newLink.id = id;
+  newLink.textContent = content;
+  newItem.appendChild(newLink);
+  return newItem;
+};
+
 if (isAdmin === "true") {
   let newItem = document.createElement("li");
   newItem.classList.add("nav-item");
 
-  const newLink = document.createElement("a");
-  newLink.href = "/upload.html";
-  newLink.classList.add("nav-link");
-  newLink.id = "uploadTag";
-  newLink.textContent = "Upload page";
+  const uploadLink = createLink("upload.html", "uploadTag", "Upload page");
+  const adminPanelLink = createLink(
+    "admin-panel.html",
+    "adminPanelTag",
+    "Admin Panel"
+  );
 
-  newItem.appendChild(newLink);
-  navbar.appendChild(newItem);
+  navbar.insertBefore(uploadLink, navbar.firstChild);
+  navbar.insertBefore(adminPanelLink, navbar.firstChild);
 }

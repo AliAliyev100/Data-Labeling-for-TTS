@@ -1,14 +1,20 @@
+body{
+  margin: 0;
+}
+
 .nav {
   list-style-type: none;
   margin: 0;
   padding: 0;
   background-color: #333;
   overflow: hidden;
+  display: flex; /* Add this line */
+  justify-content: flex-end; /* Add this line */
 }
 
-.nav-item {
+/* .nav-item {
   float: right;
-}
+} */
 
 .nav-link {
   display: block;
