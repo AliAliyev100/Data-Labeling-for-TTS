@@ -6,6 +6,10 @@ exports.createAudio = (req, res, next) => {
 
   User.findById(req.userId)
     .then((user) => {
+      if (!user) {
+        const err = new Error("No user found!");
+        return next(err);
+      }
       return textfile.findById(user.textfile);
     })
     .then((textDocument) => {
