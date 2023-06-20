@@ -81,11 +81,23 @@ exports.addItemText = (req, res, next) => {
     }
   });
 };
+
 exports.getPanel = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
-  const { user, startdate, enddate } = req.query;
+  let { user, startdate, enddate } = req.query;
 
   let textfileId = "all";
+
+  if (startdate === "") {
+    startdate = "2000-01-01";
+  }
+
+  if (enddate === "") {
+    enddate = "2100-01-01";
+  }
+
+  const startDateObj = new Date(startdate);
+  const endDateObj = new Date(enddate);
 
   try {
     const foundUser = await User.findById(user);
@@ -95,22 +107,9 @@ exports.getPanel = async (req, res, next) => {
   const limit = 20;
   const skip = (page - 1) * limit;
 
-  const matchQuery = {
+  let matchQuery = {
     _id: textfileId === "all" ? { $exists: true } : textfileId,
   };
-
-  if (startdate) {
-    matchQuery.createdAt = {
-      $gte: new Date(startdate),
-    };
-  }
-
-  if (enddate) {
-    matchQuery.createdAt = {
-      ...matchQuery.createdAt,
-      $lte: new Date(enddate),
-    };
-  }
 
   try {
     const totalCount = await Textfile.aggregate([
@@ -131,6 +130,14 @@ exports.getPanel = async (req, res, next) => {
       {
         $unwind: "$fileitems",
       },
+      {
+        $match: {
+          "fileitems.createdAt": {
+            $gte: startDateObj,
+            $lte: endDateObj,
+          },
+        },
+      },  
       {
         $group: {
           _id: null,
@@ -160,6 +167,14 @@ exports.getPanel = async (req, res, next) => {
       },
       {
         $unwind: "$fileitems",
+      },
+      {
+        $match: {
+          "fileitems.createdAt": {
+            $gte: startDateObj,
+            $lte: endDateObj,
+          },
+        },
       },
       {
         $project: {
