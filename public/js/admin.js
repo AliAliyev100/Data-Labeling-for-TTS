@@ -79,11 +79,11 @@ function addButton(text) {
   });
 }
 
-function sendRequestToPanel(text = 1, user = "All", startdate, endDate) {
+function sendRequestToPanel(text = 1, user, startdate, endDate) {
   let url = "/admin/get-panel?page=" + text;
-  url += "&user=" + encodeURIComponent(user);
-  url += "&startdate=" + encodeURIComponent(startdate);
-  url += "&enddate=" + encodeURIComponent(endDate);
+  url += "&user=" + encodeURIComponent(user || "all");
+  url += "&startdate=" + encodeURIComponent(startdate || "");
+  url += "&enddate=" + encodeURIComponent(endDate || "");
 
   fetch(url, {
     method: "GET",

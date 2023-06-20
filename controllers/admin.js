@@ -83,11 +83,40 @@ exports.addItemText = (req, res, next) => {
 };
 exports.getPanel = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
+  const { user, startdate, enddate } = req.query;
+
+  let textfileId = "all";
+
+  try {
+    const foundUser = await User.findById(user);
+    textfileId = foundUser.textfile;
+  } catch (err) {}
+
   const limit = 20;
   const skip = (page - 1) * limit;
 
+  const matchQuery = {
+    _id: textfileId === "all" ? { $exists: true } : textfileId,
+  };
+
+  if (startdate) {
+    matchQuery.createdAt = {
+      $gte: new Date(startdate),
+    };
+  }
+
+  if (enddate) {
+    matchQuery.createdAt = {
+      ...matchQuery.createdAt,
+      $lte: new Date(enddate),
+    };
+  }
+
   try {
     const totalCount = await Textfile.aggregate([
+      {
+        $match: matchQuery,
+      },
       {
         $project: {
           fileitems: {
@@ -108,12 +137,15 @@ exports.getPanel = async (req, res, next) => {
           count: { $sum: 1 },
         },
       },
-    ]).exec();
+    ]);
 
     const count = totalCount.length > 0 ? totalCount[0].count : 0;
     const totalPages = Math.ceil(count / limit);
 
     const query = [
+      {
+        $match: matchQuery,
+      },
       {
         $project: {
           filename: 1,
@@ -145,13 +177,13 @@ exports.getPanel = async (req, res, next) => {
       },
     ];
 
-    const results = await Textfile.aggregate(query).exec();
+    const results = await Textfile.aggregate(query);
 
-    res.json({ allFiles: results, pages: totalPages });
+    return res.json({ allFiles: results, pages: totalPages });
   } catch (error) {
     // Handle the error
     console.error(error);
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error });
   }
 };
 
@@ -162,9 +194,9 @@ exports.getUsers = (req, res, next) => {
       foundUsers.forEach((user) => {
         users.push({ id: user._id, name: user.name });
       });
-      res.json({ users: users });
+      return res.json({ users: users });
     })
     .catch((err) => {
-      res.status(500).send("Error retrieving users");
+      return res.status(500).send("Error retrieving users");
     });
 };
