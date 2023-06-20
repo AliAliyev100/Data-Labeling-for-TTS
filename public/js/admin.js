@@ -128,7 +128,6 @@ function updateThePagination(pages, currentpage) {
   }
 
   if (currentpage === 1) {
-    console.log("yes");
     addButton(2);
     addButton(pages);
     return;
