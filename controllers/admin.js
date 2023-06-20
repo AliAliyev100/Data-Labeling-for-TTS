@@ -92,7 +92,11 @@ exports.getPanel = async (req, res, next) => {
         {
           $project: {
             fileitems: {
-              $slice: ["$fileitems.items", 0, "$lastIndex"],
+              $cond: {
+                if: { $gt: ["$lastIndex", 0] },
+                then: { $slice: ["$fileitems.items", 0, "$lastIndex"] },
+                else: [],
+              },
             },
           },
         },
@@ -116,7 +120,11 @@ exports.getPanel = async (req, res, next) => {
         $project: {
           filename: 1,
           fileitems: {
-            $slice: ["$fileitems.items", 0, "$lastIndex"],
+            $cond: {
+              if: { $gt: ["$lastIndex", 0] },
+              then: { $slice: ["$fileitems.items", 0, "$lastIndex"] },
+              else: [],
+            },
           },
         },
       },
@@ -145,8 +153,6 @@ exports.getPanel = async (req, res, next) => {
   } catch (error) {
     // Handle the error
     console.error(error);
-    res.status(500).json({ error: "An error occurred" });
+    res.status(500).json({ error: error });
   }
 };
-
-
