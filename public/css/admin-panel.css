@@ -1,66 +1,105 @@
 table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-  }
-  
-  th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-  
-  /* Alternate row background color */
-  tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-  /* Audio Player Styles */
-  audio {
-    display: block;
-    margin: 0 auto;
-  }
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
 
-  /*  */
-  /*  */
-  /*  */
-  /*  */
-  /*  */
-  /*  */
-  /*  */
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+/* Alternate row background color */
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Audio Player Styles */
+audio {
+  display: block;
+  margin: 0 auto;
+}
+
+/*  */
+/*  */
+/*  */
+/*  */
+/*  */
+/*  */
+/*  */
 
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
 
-  .pagination button {
-    padding: 10px 15px;
-    margin: 0 5px;
-    cursor: pointer;
-    background-color: #008888;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-  }
+.pagination button {
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  background-color: #008888;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
 
-  .pagination button:hover {
-    background-color: #004400;
-  }
+.pagination button:hover {
+  background-color: #004400;
+}
 
-  .pagination button.active {
-    background-color: #f44336;
-  }
+.pagination button.active {
+  background-color: #f44336;
+}
 
-  .pagination button.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+.pagination button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/*  */
+/*  */
+/*  */
+/*  */
+/*  */
+
+
+
+.form {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  min-width: 400px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-row label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.form-row input[type="date"] {
+  width: 200px;
+}
+
+.form-row button {
+  margin-left: auto;
+}
