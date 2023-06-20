@@ -81,99 +81,72 @@ exports.addItemText = (req, res, next) => {
     }
   });
 };
-
-exports.getPanel = (req, res, next) => {
-  const page = req.query.page;
-
-  let allFiles = [];
+exports.getPanel = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
   const limit = 2;
-  let total = 0;
-  let cnt = 0;
+  const skip = (page - 1) * limit;
 
-  const passAmount = (page - 1) * limit || 0;
-  let passCounter = 0;
-  textfile
-    .find()
-    .then((textfiles) => {
-      textfiles.forEach((textfile) => {
-        total += textfile.lastIndex;
-      });
+  try {
+    const totalCount = await textfile
+      .aggregate([
+        {
+          $project: {
+            fileitems: {
+              $slice: ["$fileitems.items", 0, "$lastIndex"],
+            },
+          },
+        },
+        {
+          $unwind: "$fileitems",
+        },
+        {
+          $group: {
+            _id: null,
+            count: { $sum: 1 },
+          },
+        },
+      ])
+      .exec();
 
-      for (let j = 0; j < textfiles.length; j++) {
-        if (cnt >= limit) {
-          break;
-        }
-        const textfile = textfiles[j];
-        for (let i = 0; i < textfile.lastIndex; i++) {
-          passCounter++;
-          if (passCounter <= passAmount) {
-            continue;
-          }
-          const item = textfile.fileitems.items[i];
-          allFiles.push({
-            filename: textfile.filename,
-            audioPath: item.audioPath,
-            text: item.text,
-            createdAt: item.createdAt,
-          });
-          cnt++;
-          if (cnt >= limit) {
-            break;
-          }
-        }
-      }
+    const count = totalCount.length > 0 ? totalCount[0].count : 0;
+    const totalPages = Math.ceil(count / limit);
 
-      res.json({ allFiles: allFiles, pages: Math.ceil(total / limit) });
-    })
-    .catch((err) => {
-      res.status(500).send(err);
-    });
+    const query = [
+      {
+        $project: {
+          filename: 1,
+          fileitems: {
+            $slice: ["$fileitems.items", 0, "$lastIndex"],
+          },
+        },
+      },
+      {
+        $unwind: "$fileitems",
+      },
+      {
+        $project: {
+          filename: 1,
+          audioPath: "$fileitems.audioPath",
+          text: "$fileitems.text",
+          createdAt: "$fileitems.createdAt",
+        },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
+    ];
+
+    const results = await textfile.aggregate(query).exec();
+
+    res.json({ allFiles: results, pages: totalPages });
+  } catch (error) {
+    // Handle the error
+    console.error(error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 };
 
-// exports.getPanel = async (req, res, next) => {
-//   try {
-//     const result = await Textfile.aggregate([
-//       {
-//         $group: {
-//           _id: null,
-//           mergedItems: {
-//             $push: {
-//               filename: "$filename",
-//               items: "$fileitems.items",
-//             },
-//           },
-//         },
-//       },
-//       {
-//         $project: {
-//           _id: 0,
-//           mergedItems: {
-//             $reduce: {
-//               input: "$mergedItems",
-//               initialValue: [],
-//               in: {
-//                 $concatArrays: [
-//                   "$$value",
-//                   {
-//                     $map: {
-//                       input: "$$this.items",
-//                       as: "item",
-//                       in: {
-//                         filename: "$$this.filename",
-//                         item: "$$item",
-//                       },
-//                     },
-//                   },
-//                 ],
-//               },
-//             },
-//           },
-//         },
-//       },
-//     ]).exec();
-//     res.json(result[0].mergedItems);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
+
