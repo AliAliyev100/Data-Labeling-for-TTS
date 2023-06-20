@@ -42,27 +42,13 @@ function createTableRow(userData) {
 
   tableBody.appendChild(row);
 }
+const urlParams = new URLSearchParams(window.location.search);
+let pageNumber = urlParams.get("page");
 
-fetch("/admin/get-panel", {
-  method: "GET",
-  headers: {
-    Authorization: "Bearer " + localStorage.getItem("token"),
-  },
-})
-  .then((response) => response.json())
-  .then((data) => {
-    if (!data) {
-      return;
-    }
-    data.allFiles.forEach((userData) => {
-      createTableRow(userData);
-    });
-    const pages = data.pages;
-    updateThePagination(pages, 1);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+if (!pageNumber) {
+  pageNumber = 1; // Set your desired default page number here
+}
+sendRequestToPanel(pageNumber);
 
 const pagination = document.getElementById("pagination");
 
@@ -72,31 +58,36 @@ function addButton(text) {
   pagination.appendChild(button);
 
   button.addEventListener("click", function () {
-    let url = "/admin/get-panel?page=" + text;
-    fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data) {
-          return;
-        }
-        tableBody.innerHTML = "";
-
-        data.allFiles.forEach((userData) => {
-          createTableRow(userData);
-        });
-        const pages = data.pages;
-        updateThePagination(pages, parseInt(text));
-      })
-      .catch((error) => {
-        // Handle any errors
-        console.error(error);
-      });
+    sendRequestToPanel(text);
   });
+}
+
+function sendRequestToPanel(text) {
+  let url = "/admin/get-panel?page=" + text;
+  fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (!data) {
+        return;
+      }
+      tableBody.innerHTML = "";
+
+      data.allFiles.forEach((userData) => {
+        createTableRow(userData);
+      });
+      const pages = data.pages;
+      updateThePagination(pages, parseInt(text));
+      history.pushState({}, "", "?page=" + text);
+    })
+    .catch((error) => {
+      // Handle any errors
+      console.error(error);
+    });
 }
 
 function updateThePagination(pages, currentpage) {
