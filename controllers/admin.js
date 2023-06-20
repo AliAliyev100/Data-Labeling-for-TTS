@@ -83,7 +83,7 @@ exports.addItemText = (req, res, next) => {
 };
 exports.getPanel = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = 2;
+  const limit = 20;
   const skip = (page - 1) * limit;
 
   try {
