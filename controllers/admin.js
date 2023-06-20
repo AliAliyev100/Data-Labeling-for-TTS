@@ -99,7 +99,11 @@ exports.getPanel = (req, res, next) => {
         total += textfile.lastIndex;
       });
 
-      textfiles.forEach((textfile) => {
+      for (let j = 0; j < textfiles.length; j++) {
+        if (cnt >= limit) {
+          break;
+        }
+        const textfile = textfiles[j];
         for (let i = 0; i < textfile.lastIndex; i++) {
           passCounter++;
           if (passCounter <= passAmount) {
@@ -117,7 +121,8 @@ exports.getPanel = (req, res, next) => {
             break;
           }
         }
-      });
+      }
+
       res.json({ allFiles: allFiles, pages: Math.ceil(total / limit) });
     })
     .catch((err) => {
