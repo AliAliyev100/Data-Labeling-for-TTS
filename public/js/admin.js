@@ -1,4 +1,30 @@
 const tableBody = document.querySelector("#admin-data tbody");
+const urlParams = new URLSearchParams(window.location.search);
+const pagination = document.getElementById("pagination");
+const adminForm = document.getElementById("panelForm");
+const userSelect = document.getElementById("user");
+
+onload = () => {
+  let pageNumber = urlParams.get("page") || 1;
+  sendRequestToPanel(pageNumber);
+
+  fetch("admin/get-users", {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      const users = result.users;
+      users.forEach((user) => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.textContent = user.name;
+        userSelect.appendChild(option);
+      });
+    });
+};
 
 function createTableRow(userData) {
   const row = document.createElement("tr");
@@ -42,15 +68,6 @@ function createTableRow(userData) {
 
   tableBody.appendChild(row);
 }
-const urlParams = new URLSearchParams(window.location.search);
-let pageNumber = urlParams.get("page");
-
-if (!pageNumber) {
-  pageNumber = 1; // Set your desired default page number here
-}
-sendRequestToPanel(pageNumber);
-
-const pagination = document.getElementById("pagination");
 
 function addButton(text) {
   let button = document.createElement("button");
@@ -62,8 +79,12 @@ function addButton(text) {
   });
 }
 
-function sendRequestToPanel(text) {
+function sendRequestToPanel(text = 1, user = "All", startdate, endDate) {
   let url = "/admin/get-panel?page=" + text;
+  url += "&user=" + encodeURIComponent(user);
+  url += "&startdate=" + encodeURIComponent(startdate);
+  url += "&enddate=" + encodeURIComponent(endDate);
+
   fetch(url, {
     method: "GET",
     headers: {
@@ -129,3 +150,12 @@ function updateThePagination(pages, currentpage) {
   }
   addButton(pages);
 }
+
+adminForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+  let selectedUser = document.getElementById("user").value;
+  let startDate = document.getElementById("start-date").value;
+  let endDate = document.getElementById("end-date").value;
+
+  sendRequestToPanel(1, selectedUser, startDate, endDate);
+});
