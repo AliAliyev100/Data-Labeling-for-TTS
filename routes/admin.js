@@ -7,4 +7,6 @@ router.post("/add-item-text", adminController.addItemText);
 
 router.get("/get-panel", adminController.getPanel);
 
+router.get("/get-users", adminController.getUsers);
+
 module.exports = router;
