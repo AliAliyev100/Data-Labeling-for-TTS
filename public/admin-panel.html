@@ -22,6 +22,30 @@
       </li>
     </ul>
 
+    <form class="form" id="panelForm">
+      <div class="form-row">
+        <label for="user">Select User:</label>
+        <select id="user" name="user">
+          <option value="all">All Users</option>
+          <!-- Add dynamic options for users here -->
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date" name="start-date" />
+      </div>
+
+      <div class="form-row">
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date" name="end-date" />
+      </div>
+
+      <div class="form-row">
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
     <div class="table-container" id="admin-data">
       <table>
         <thead>
