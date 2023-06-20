@@ -2,7 +2,7 @@ const mammoth = require("mammoth");
 const fs = require("fs");
 
 const Textfile = require("../models/textfile");
-const textfile = require("../models/textfile");
+const User = require("../models/user");
 
 const addTextToDatabase = (filedata, file) => {
   const files = filedata
@@ -87,30 +87,28 @@ exports.getPanel = async (req, res, next) => {
   const skip = (page - 1) * limit;
 
   try {
-    const totalCount = await textfile
-      .aggregate([
-        {
-          $project: {
-            fileitems: {
-              $cond: {
-                if: { $gt: ["$lastIndex", 0] },
-                then: { $slice: ["$fileitems.items", 0, "$lastIndex"] },
-                else: [],
-              },
+    const totalCount = await Textfile.aggregate([
+      {
+        $project: {
+          fileitems: {
+            $cond: {
+              if: { $gt: ["$lastIndex", 0] },
+              then: { $slice: ["$fileitems.items", 0, "$lastIndex"] },
+              else: [],
             },
           },
         },
-        {
-          $unwind: "$fileitems",
+      },
+      {
+        $unwind: "$fileitems",
+      },
+      {
+        $group: {
+          _id: null,
+          count: { $sum: 1 },
         },
-        {
-          $group: {
-            _id: null,
-            count: { $sum: 1 },
-          },
-        },
-      ])
-      .exec();
+      },
+    ]).exec();
 
     const count = totalCount.length > 0 ? totalCount[0].count : 0;
     const totalPages = Math.ceil(count / limit);
@@ -147,7 +145,7 @@ exports.getPanel = async (req, res, next) => {
       },
     ];
 
-    const results = await textfile.aggregate(query).exec();
+    const results = await Textfile.aggregate(query).exec();
 
     res.json({ allFiles: results, pages: totalPages });
   } catch (error) {
@@ -155,4 +153,18 @@ exports.getPanel = async (req, res, next) => {
     console.error(error);
     res.status(500).json({ error: error });
   }
+};
+
+exports.getUsers = (req, res, next) => {
+  User.find()
+    .then((foundUsers) => {
+      const users = [];
+      foundUsers.forEach((user) => {
+        users.push({ id: user._id, name: user.name });
+      });
+      res.json({ users: users });
+    })
+    .catch((err) => {
+      res.status(500).send("Error retrieving users");
+    });
 };
