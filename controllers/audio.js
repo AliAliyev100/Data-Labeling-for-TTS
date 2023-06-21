@@ -36,9 +36,7 @@ exports.createAudio = (req, res, next) => {
 
       items[currentIndex].audioPath =
         "Audios/" + currentUser.name + "_audios/" + textId + ".wav";
-      items[currentIndex].createdAt = new Date(
-        new Date().getTime() + 4 * 60 * 60 * 1000
-      );
+      items[currentIndex].createdAt = new Date();
 
       while (items[currentIndex] && items[currentIndex].audioPath) {
         currentIndex++;
