@@ -41,6 +41,7 @@ exports.createAudio = (req, res, next) => {
       while (items[currentIndex] && items[currentIndex].audioPath) {
         currentIndex++;
       }
+      textDocument.lastIndex = currentIndex;
       const result =
         textDocument.lastIndex !== items.length
           ? items[currentIndex]
@@ -48,7 +49,6 @@ exports.createAudio = (req, res, next) => {
               text: "Tebrikler! Butun Cumleleri Bitirdiniz!",
               fileName: "finished",
             };
-      textDocument.lastIndex = currentIndex;
       res.json({
         result: result.text,
         fileName: result._id,
