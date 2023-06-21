@@ -174,7 +174,7 @@ function deleteAudio(textfileId, textId) {
     },
   })
     .then((response) => {
-      sendRequestToPanel(1, selectedUser, startDate, endDate);
+      sendRequestToPanel(pageNumber, selectedUser, startDate, endDate);
     })
     .catch((error) => {
       console.error(error);
