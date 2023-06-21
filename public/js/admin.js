@@ -167,18 +167,32 @@ function updateThePagination(pages, currentpage) {
 }
 
 function deleteAudio(textfileId, textId) {
-  fetch(`/admin/delete-audio?textfileId=${textfileId}&textId=${textId}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  })
-    .then((response) => {
-      sendRequestToPanel(pageNumber, selectedUser, startDate, endDate);
+  const confirmed = window.confirm(
+    "Are you sure you want to delete the audio?"
+  );
+  if (confirmed) {
+    const button = document.querySelector(`button[data-id="${textId}"]`);
+    if (button) {
+      const row = button.closest("tr");
+      if (row) {
+        row.remove();
+      }
+    }
+    fetch(`/admin/delete-audio?textfileId=${textfileId}&textId=${textId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
     })
-    .catch((error) => {
-      console.error(error);
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to delete audio.");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 }
 
 adminForm.addEventListener("submit", function (event) {
