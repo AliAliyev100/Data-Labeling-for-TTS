@@ -182,6 +182,7 @@ exports.getPanel = async (req, res, next) => {
           audioPath: "$fileitems.audioPath",
           text: "$fileitems.text",
           createdAt: "$fileitems.createdAt",
+          textId: "$fileitems._id",
         },
       },
       {
@@ -214,4 +215,24 @@ exports.getUsers = (req, res, next) => {
     .catch((err) => {
       return res.status(500).send("Error retrieving users");
     });
+};
+
+exports.deleteAudio = async (req, res, next) => {
+  const { textfileId, textId } = req.query;
+
+  try {
+    const textfile = await Textfile.findById(textfileId).exec();
+    const items = textfile.fileitems.items;
+
+    const foundItem = items.find((item) => {
+      return item._id.toString() === textId.toString();
+    });
+
+    foundItem.set("createdAt", undefined);
+
+    await textfile.save();
+  } catch (err) {
+    return res.status(500).send("Error deleting file");
+  }
+  res.json({ result: "file deleted" });
 };

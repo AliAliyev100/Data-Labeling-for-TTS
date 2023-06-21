@@ -9,4 +9,6 @@ router.get("/get-panel", adminController.getPanel);
 
 router.get("/get-users", adminController.getUsers);
 
+router.delete("/delete-audio", adminController.deleteAudio);
+
 module.exports = router;

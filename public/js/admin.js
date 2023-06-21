@@ -66,9 +66,21 @@ function createTableRow(userData) {
         timeStyle: "short",
       })
     : "";
-
   createdAtCell.textContent = audioDate;
   row.appendChild(createdAtCell);
+
+  const deleteButtonCell = document.createElement("td");
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete";
+  deleteButton.setAttribute("data-id", userData.textId);
+  deleteButton.setAttribute("data-textfile-id", userData._id);
+  deleteButtonCell.appendChild(deleteButton);
+  deleteButton.className = "delete-button";
+
+  deleteButton.addEventListener("click", function () {
+    deleteAudio(userData._id, userData.textId);
+  });
+  row.appendChild(deleteButtonCell);
 
   tableBody.appendChild(row);
 }
@@ -152,6 +164,21 @@ function updateThePagination(pages, currentpage) {
     addButton(currentpage + 1);
   }
   addButton(pages);
+}
+
+function deleteAudio(textfileId, textId) {
+  fetch(`/admin/delete-audio?textfileId=${textfileId}&textId=${textId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  })
+    .then((response) => {
+      sendRequestToPanel(1, selectedUser, startDate, endDate);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 
 adminForm.addEventListener("submit", function (event) {

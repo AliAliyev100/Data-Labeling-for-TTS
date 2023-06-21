@@ -103,3 +103,18 @@ audio {
 .form-row button {
   margin-left: auto;
 }
+
+
+.delete-button {
+  background-color: #008888;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.delete-button:hover {
+  background-color: #004400;
+}
