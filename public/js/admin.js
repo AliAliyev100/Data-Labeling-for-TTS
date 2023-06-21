@@ -4,8 +4,12 @@ const pagination = document.getElementById("pagination");
 const adminForm = document.getElementById("panelForm");
 const userSelect = document.getElementById("user");
 
+let pageNumber = urlParams.get("page") || 1;
+let selectedUser;
+let startDate;
+let endDate;
+
 onload = () => {
-  let pageNumber = urlParams.get("page") || 1;
   sendRequestToPanel(pageNumber);
 
   fetch("admin/get-users", {
@@ -75,7 +79,7 @@ function addButton(text) {
   pagination.appendChild(button);
 
   button.addEventListener("click", function () {
-    sendRequestToPanel(text);
+    sendRequestToPanel(text, selectedUser, startDate, endDate);
   });
 }
 
@@ -152,9 +156,9 @@ function updateThePagination(pages, currentpage) {
 
 adminForm.addEventListener("submit", function (event) {
   event.preventDefault();
-  let selectedUser = document.getElementById("user").value;
-  let startDate = document.getElementById("start-date").value;
-  let endDate = document.getElementById("end-date").value;
+  selectedUser = document.getElementById("user").value;
+  startDate = document.getElementById("start-date").value;
+  endDate = document.getElementById("end-date").value;
 
   sendRequestToPanel(1, selectedUser, startDate, endDate);
 });
