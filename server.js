@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
+const { exec } = require("child_process");
+const cron = require("node-cron");
 
 const textfile = require("./models/textfile");
 const User = require("./models/user");
@@ -115,6 +117,40 @@ mongoose
     // });
 
     app.listen(3000);
+
+    cron.schedule("0 20 * * *", () => {
+      performBackup();
+    });
+
+    // Function to perform MongoDB backup
+    async function performBackup() {
+      try {
+        const backupDir = __dirname + "/backups"; // Specify the backup directory here
+
+        const currentDate = new Date().toISOString().replace(/:/g, "-");
+        const backupFileName = `backup_${currentDate}`;
+        const command = `mongodump --uri=${mongoURI} --out=${backupDir}/${backupFileName}`;
+
+        exec(command, (error, stdout, stderr) => {
+          if (error) {
+            console.error("MongoDB backup failed:", error);
+          } else {
+            console.log("MongoDB backup completed");
+          }
+        });
+      } catch (error) {
+        console.error("MongoDB backup failed:", error);
+      }
+    }
+
+    // backup -> mongorestore --mongorestore --uri=mongodb://localhost:27017 --dir=backups\backup_2023-06-22T12-51-00.745Z/tts
+    process.on("SIGINT", () => {
+      mongoose.connection.close(() => {
+        server.close(() => {
+          process.exit(0);
+        });
+      });
+    });
   })
   .catch((err) => {
     throw new Error(err);
