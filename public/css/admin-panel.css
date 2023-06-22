@@ -118,3 +118,17 @@ audio {
 .delete-button:hover {
   background-color: #004400;
 }
+
+.edit-button {
+  background-color: #444400;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-button:hover {
+  background-color: #440000;
+}

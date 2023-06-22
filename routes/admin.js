@@ -11,4 +11,6 @@ router.get("/get-users", adminController.getUsers);
 
 router.delete("/delete-audio", adminController.deleteAudio);
 
+router.put("/edit-text", adminController.editText)
+
 module.exports = router;

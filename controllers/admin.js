@@ -137,7 +137,7 @@ exports.getPanel = async (req, res, next) => {
             $lte: endDateObj,
           },
         },
-      },  
+      },
       {
         $group: {
           _id: null,
@@ -235,4 +235,33 @@ exports.deleteAudio = async (req, res, next) => {
     return res.status(500).send("Error deleting file");
   }
   res.json({ result: "file deleted" });
+};
+
+exports.editText = async (req, res, next) => {
+  const { content, textfileId, textId } = req.body;
+
+  try {
+    // Find the textfile by textfileId and update the specific item within the fileitems array
+    const updatedTextfile = await Textfile.findOneAndUpdate(
+      {
+        _id: textfileId,
+        "fileitems.items._id": textId,
+      },
+      {
+        $set: {
+          "fileitems.items.$.text": content,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedTextfile) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    return res.status(200).json({ message: "Text updated successfully" });
+  } catch (error) {
+    console.error("Error updating text:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
 };

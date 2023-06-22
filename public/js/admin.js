@@ -41,17 +41,12 @@ function createTableRow(userData) {
   }
   row.appendChild(userCell);
 
-  const filenameCell = document.createElement("td");
-  filenameCell.textContent = userData.filename;
-  row.appendChild(filenameCell);
-
   const textCell = document.createElement("td");
   textCell.textContent = userData.text;
   row.appendChild(textCell);
 
   const audioCell = document.createElement("td");
   const audioElement = document.createElement("audio");
-  // audioElement.src = serverURL + "/" + userData.item.audioPath;
   if (userData.audioPath) {
     audioElement.src = "/" + userData.audioPath;
   }
@@ -76,13 +71,63 @@ function createTableRow(userData) {
   deleteButton.setAttribute("data-textfile-id", userData._id);
   deleteButtonCell.appendChild(deleteButton);
   deleteButton.className = "delete-button";
-
   deleteButton.addEventListener("click", function () {
     deleteAudio(userData._id, userData.textId);
   });
   row.appendChild(deleteButtonCell);
 
+  const editButtonCell = document.createElement("td");
+  const editButton = document.createElement("button");
+  editButton.textContent = "Edit";
+  editButton.setAttribute("data-id", userData.textId);
+  editButton.setAttribute("data-textfile-id", userData._id);
+  editButtonCell.appendChild(editButton);
+  editButton.className = "edit-button";
+  editButton.addEventListener("click", function () {
+    enableTextEdit(textCell, userData._id, userData.textId);
+  });
+  row.appendChild(editButtonCell);
+
   tableBody.appendChild(row);
+}
+
+function enableTextEdit(textCell, textfileId, textId) {
+  const inputField = document.createElement("input");
+  inputField.type = "text";
+  inputField.value = textCell.textContent;
+
+  inputField.style.width = "800px";
+  inputField.style.height = "40px";
+
+  textCell.textContent = "";
+  textCell.appendChild(inputField);
+
+  inputField.focus();
+
+  inputField.addEventListener("blur", function () {
+    textCell.textContent = inputField.value;
+
+    fetch("/admin/edit-text", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({
+        content: textCell.textContent,
+        textfileId: textfileId,
+        textId: textId,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        alert("Failed to delete audio.");
+        sendRequestToPanel(pageNumber, selectedUser, startDate, endDate);
+      });
+  });
 }
 
 function addButton(text) {
@@ -186,11 +231,13 @@ function deleteAudio(textfileId, textId) {
     })
       .then((response) => {
         if (!response.ok) {
+          sendRequestToPanel(pageNumber, selectedUser, startDate, endDate);
           throw new Error("Failed to delete audio.");
         }
       })
       .catch((error) => {
-        console.error(error);
+        alert("Failed to delete audio.");
+        sendRequestToPanel(pageNumber, selectedUser, startDate, endDate);
       });
   }
 }
