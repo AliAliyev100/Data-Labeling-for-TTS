@@ -21,30 +21,32 @@
         <a class="nav-link" id="logoutTag">Sign-out</a>
       </li>
     </ul>
+    <div class="form-container">
+      <form class="form" id="panelForm">
+        <div class="form-row">
+          <label for="user">Select User:</label>
+          <select id="user" name="user">
+            <option value="all">All Users</option>
+            <!-- Add dynamic options for users here -->
+          </select>
+        </div>
 
-    <form class="form" id="panelForm">
-      <div class="form-row">
-        <label for="user">Select User:</label>
-        <select id="user" name="user">
-          <option value="all">All Users</option>
-          <!-- Add dynamic options for users here -->
-        </select>
-      </div>
+        <div class="form-row">
+          <label for="start-date">Start Date:</label>
+          <input type="date" id="start-date" name="start-date" />
+        </div>
 
-      <div class="form-row">
-        <label for="start-date">Start Date:</label>
-        <input type="date" id="start-date" name="start-date" />
-      </div>
+        <div class="form-row">
+          <label for="end-date">End Date:</label>
+          <input type="date" id="end-date" name="end-date" />
+        </div>
 
-      <div class="form-row">
-        <label for="end-date">End Date:</label>
-        <input type="date" id="end-date" name="end-date" />
-      </div>
-
-      <div class="form-row">
-        <button type="submit">Submit</button>
-      </div>
-    </form>
+        <div class="form-row">
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+      <button class="total-time-btn" id="totalTimeBtn">Total Time</button>
+    </div>
 
     <div class="table-container" id="admin-data">
       <table>
@@ -67,6 +69,36 @@
 
     <div class="pagination" id="pagination">
       <button>1</button>
+    </div>
+
+    <div id="time-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="modalForm">
+          <div class="form-row">
+            <label for="user">Select User:</label>
+            <select id="modal-user" name="modal-user">
+              <option value="all">All Users</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="modal-start-date">Start Date:</label>
+            <input type="date" id="modal-start-date" name="modal-start-date" "
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="modal-end-date">End Date:</label>
+            <input type="date" id="modal-end-date" name="modal-end-date" />
+          </div>
+
+          <div class="form-row">
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+        <h3 id="totalTimeResult">Total time:</h3>
+      </div>
     </div>
   </body>
 </html>

@@ -13,4 +13,6 @@ router.delete("/delete-audio", adminController.deleteAudio);
 
 router.put("/edit-text", adminController.editText)
 
+router.post("/get-time", adminController.getTotalTime)
+
 module.exports = router;

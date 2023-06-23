@@ -4,6 +4,12 @@ const pagination = document.getElementById("pagination");
 const adminForm = document.getElementById("panelForm");
 const userSelect = document.getElementById("user");
 
+let modal = document.getElementById("time-modal");
+let totalTimeBtn = document.getElementById("totalTimeBtn");
+let span = document.getElementsByClassName("close")[0];
+const modalUserSelect = document.getElementById("modal-user");
+const modalForm = document.getElementById("modalForm");
+
 let pageNumber = urlParams.get("page") || 1;
 let selectedUser;
 let startDate;
@@ -11,23 +17,16 @@ let endDate;
 
 onload = () => {
   sendRequestToPanel(pageNumber);
+  getUsersAndAppend(userSelect, modalUserSelect);
+  let todaysDate = new Date().toISOString().split("T")[0];
+  let tomorrowsDate = new Date(todaysDate);
+  tomorrowsDate.setDate(tomorrowsDate.getDate() + 1);
+  tomorrowsDate = tomorrowsDate.toISOString().split("T")[0];
 
-  fetch("admin/get-users", {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      const users = result.users;
-      users.forEach((user) => {
-        const option = document.createElement("option");
-        option.value = user.id;
-        option.textContent = user.name;
-        userSelect.appendChild(option);
-      });
-    });
+  document.getElementById("modal-start-date").value = todaysDate;
+  document.getElementById("modal-end-date").value = tomorrowsDate;
+  document.getElementById("start-date").value = todaysDate;
+  document.getElementById("end-date").value = tomorrowsDate;
 };
 
 function createTableRow(userData) {
@@ -242,6 +241,26 @@ function deleteAudio(textfileId, textId) {
   }
 }
 
+function getUsersAndAppend(appendPlace1, appendPlace2) {
+  fetch("admin/get-users", {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      const users = result.users;
+      users.forEach((user) => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.textContent = user.name;
+        appendPlace1.appendChild(option);
+        appendPlace2.appendChild(option);
+      });
+    });
+}
+
 adminForm.addEventListener("submit", function (event) {
   event.preventDefault();
   selectedUser = document.getElementById("user").value;
@@ -249,4 +268,50 @@ adminForm.addEventListener("submit", function (event) {
   endDate = document.getElementById("end-date").value;
 
   sendRequestToPanel(1, selectedUser, startDate, endDate);
+});
+
+totalTimeBtn.addEventListener("click", openModal);
+function openModal() {
+  modal.style.display = "block";
+}
+
+span.addEventListener("click", closeModal);
+function closeModal() {
+  modal.style.display = "none";
+}
+
+window.addEventListener("click", function (event) {
+  if (event.target == modal) {
+    closeModal();
+  }
+});
+
+modalForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const selectedModalUser = document.getElementById("modal-user").value;
+  const startModalDate = document.getElementById("modal-start-date").value;
+  const endModalDate = document.getElementById("modal-end-date").value;
+
+  fetch("admin/get-time", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+    body: JSON.stringify({
+      user: selectedModalUser,
+      startDate: startModalDate,
+      endDate: endModalDate,
+    }),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
+      document.getElementById("totalTimeResult").innerHTML =
+        "Total time: " + result.totalTime + " milliseconds";
+    })
+    .catch((err) => {
+      alert("Could not retrieve info");
+    });
 });

@@ -1,6 +1,9 @@
 const mammoth = require("mammoth");
 const fs = require("fs");
 
+const ffprobe = require("ffprobe");
+const ffprobeStatic = require("ffprobe-static");
+
 const Textfile = require("../models/textfile");
 const User = require("../models/user");
 
@@ -263,5 +266,108 @@ exports.editText = async (req, res, next) => {
   } catch (error) {
     console.error("Error updating text:", error);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.getTotalTime = async (req, res, next) => {
+  let { user, startDate, endDate } = req.body;
+
+  let textfileId = "all";
+
+  if (startDate === "") {
+    startDate = "2000-01-01";
+  }
+
+  if (endDate === "") {
+    endDate = "2100-01-01";
+  }
+
+  const startDateObj = new Date(startDate);
+  const endDateObj = new Date(endDate);
+
+  try {
+    const foundUser = await User.findById(user);
+    textfileId = foundUser.textfile;
+  } catch (err) {}
+
+  let matchQuery = {
+    _id: textfileId === "all" ? { $exists: true } : textfileId,
+  };
+
+  try {
+    const query = [
+      {
+        $match: matchQuery,
+      },
+      {
+        $project: {
+          // filename: 1,
+          fileitems: {
+            $cond: {
+              if: { $gt: ["$lastIndex", 0] },
+              then: { $slice: ["$fileitems.items", 0, "$lastIndex"] },
+              else: [],
+            },
+          },
+        },
+      },
+      {
+        $unwind: "$fileitems",
+      },
+      {
+        $match: {
+          "fileitems.createdAt": {
+            $gte: startDateObj,
+            $lte: endDateObj,
+          },
+        },
+      },
+      {
+        $project: {
+          filename: 1,
+          audioPath: "$fileitems.audioPath",
+        },
+      },
+    ];
+    const results = await Textfile.aggregate(query);
+
+    let totalTime = 0;
+
+    return getAudioDurations(results)
+      .then((result) => {
+        return res.json(result);
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        res.status(500).json({ error: "An error occurred" });
+      });
+    res.json({ totalTime: totalTime });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getAudioDurations = async (audioList) => {
+  const durationPromises = audioList.map((item) => {
+    const audioPath = item.audioPath;
+
+    return ffprobe(audioPath, { path: ffprobeStatic.path })
+      .then((info) => {
+        const duration = info.streams[0].duration;
+        return parseFloat(duration);
+      })
+      .catch((err) => {
+        console.error("Error getting audio duration:", err);
+        return 0; // Or any default duration value in case of error
+      });
+  });
+
+  try {
+    const durations = await Promise.all(durationPromises);
+    const totalTime = durations.reduce((acc, duration) => acc + duration, 0);
+    return { totalTime };
+  } catch (err) {
+    console.error("Error calculating total time:", err);
+    return { totalTime: 0 }; // Or any default value in case of error
   }
 };
