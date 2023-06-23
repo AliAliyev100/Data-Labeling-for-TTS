@@ -198,7 +198,7 @@ exports.getPanel = async (req, res, next) => {
 
     const results = await Textfile.aggregate(query);
 
-    return res.json({ allFiles: results, pages: totalPages });
+    return res.json({ allFiles: results, pages: totalPages, skip: skip });
   } catch (error) {
     // Handle the error
     console.error(error);

@@ -29,8 +29,13 @@ onload = () => {
   document.getElementById("end-date").value = tomorrowsDate;
 };
 
-function createTableRow(userData) {
+function createTableRow(userData, index) {
   const row = document.createElement("tr");
+
+  const indexCell = document.createElement("td");
+  indexCell.textContent = index;
+  indexCell.style.fontWeight = "bold";
+  row.appendChild(indexCell);
 
   // Create and append table cells for each data field
   const userCell = document.createElement("td");
@@ -158,15 +163,14 @@ function sendRequestToPanel(text = 1, user, startdate, endDate) {
       }
       tableBody.innerHTML = "";
 
-      data.allFiles.forEach((userData) => {
-        createTableRow(userData);
+      data.allFiles.forEach((userData, index) => {
+        createTableRow(userData, index + 1 + data.skip);
       });
       const pages = data.pages;
       updateThePagination(pages, parseInt(text));
       history.pushState({}, "", "?page=" + text);
     })
     .catch((error) => {
-      // Handle any errors
       console.error(error);
     });
 }
