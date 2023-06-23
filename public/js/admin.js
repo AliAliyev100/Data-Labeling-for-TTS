@@ -255,8 +255,11 @@ function getUsersAndAppend(appendPlace1, appendPlace2) {
         const option = document.createElement("option");
         option.value = user.id;
         option.textContent = user.name;
+        const option2 = document.createElement("option");
+        option2.value = user.id;
+        option2.textContent = user.name;
         appendPlace1.appendChild(option);
-        appendPlace2.appendChild(option);
+        appendPlace2.appendChild(option2);
       });
     });
 }
