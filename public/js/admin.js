@@ -293,6 +293,9 @@ modalForm.addEventListener("submit", function (event) {
   const startModalDate = document.getElementById("modal-start-date").value;
   const endModalDate = document.getElementById("modal-end-date").value;
 
+  document.getElementById("totalTimeResult").innerHTML =
+    "Please wait few seconds";
+
   fetch("admin/get-time", {
     method: "POST",
     headers: {
@@ -309,7 +312,7 @@ modalForm.addEventListener("submit", function (event) {
     .then((result) => {
       console.log(result);
       document.getElementById("totalTimeResult").innerHTML =
-        "Total time: " + result.totalTime + " milliseconds";
+        "Total time: " + result.totalTime.toFixed(2) + " milliseconds";
     })
     .catch((err) => {
       alert("Could not retrieve info");
