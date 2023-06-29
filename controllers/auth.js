@@ -21,7 +21,7 @@ exports.login = (req, res, next) => {
         if (!isEqual) {
           return res.status(401).json({});
         }
-        let hours = 5;
+        let hours = 10;
 
         const token = jwt.sign(
           {
